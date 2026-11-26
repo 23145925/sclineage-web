@@ -696,6 +696,62 @@
       "caption": "Supplementary Figure S14. Matched-population comparison with OT-CFM across three tasks and five metrics. Means and sample standard deviations across three seeds.",
       "width": 1586,
       "height": 595
+    },
+    "ct34-routes": {
+      "src": "assets/figures/ct34-routes.webp",
+      "page": 7,
+      "caption": "Fig. 3a. Global lineage routes across four methods and the local reconstruction of retrospectively selected region I. The global maps use the same 100,000 CT34 cells (seed 43); the local maps use the same 16,000 cells. Original reference/non-reference transition legends and state sequences are retained.",
+      "width": 1828,
+      "height": 1000
+    },
+    "ct34-structure-scores": {
+      "src": "assets/figures/ct34-structure-scores.webp",
+      "page": 7,
+      "caption": "Fig. 3b. Structure and continuity scores: branch-localization, directed-edge and rooted-ancestry F1, plus Spearman correlations for reference distance and path ordering. Bars and whiskers show means and sample standard deviations across five technical fits per method (seeds 44–48).",
+      "width": 1828,
+      "height": 432
+    },
+    "barcode-evaluation": {
+      "src": "assets/figures/barcode-evaluation.webp",
+      "page": 8,
+      "caption": "Fig. 4a. Barcode-linked fate-evaluation scheme. RNA from D2, D4 and D6 is used to fit representations; barcode-linked descendants provide the fate-evaluation target. Barcodes are excluded from representation learning.",
+      "width": 1828,
+      "height": 388
+    },
+    "barcode-clone-examples": {
+      "src": "assets/figures/barcode-clone-examples.webp",
+      "page": 8,
+      "caption": "Fig. 4b,c. Original D2-to-D6 clone maps and fate-composition bars for clone 4123 (17 observed neutrophil descendants) and clone 802 (27 observed monocyte descendants). These are illustrative clones; sclineage assigns 95.6% and 78.0% probability to the respective observed fate.",
+      "width": 1828,
+      "height": 840
+    },
+    "barcode-fate-evaluation": {
+      "src": "assets/figures/barcode-fate-evaluation.webp",
+      "page": 8,
+      "caption": "Fig. 4d,e. Original cohort-level native-readout error plots and shared-readout precision–recall curves. Native TV uses 978 D4-to-D6 test clones, and conditional N/(N+M) MAE uses 672 eligible clones. The shared ten-fate readout uses 375 D2-to-D6 and 978 D4-to-D6 test clones. Confidence intervals quantify clone-sampling uncertainty with fitted predictions held fixed.",
+      "width": 1828,
+      "height": 1048
+    },
+    "generation-benchmarks": {
+      "src": "assets/figures/generation-benchmarks.webp",
+      "page": 9,
+      "caption": "Fig. 5f. Original held-out population benchmarks for TIGON, scDiffEq and sclineage across D4 interpolation, D6 forward extrapolation and D2 backward extrapolation. Pearson R, SWD and RBF-MMD summarize seeds 42–44; kNN recall summarizes three repetitions of resampling. Bars and whiskers show means and sample standard deviations.",
+      "width": 1828,
+      "height": 496
+    },
+    "ct34-ancestry": {
+      "src": "assets/figures/ct34-ancestry.webp",
+      "page": 32,
+      "caption": "Supplementary Fig. S1b. Reference and sclineage terminal-route skeletons for seed 44, constructed from the same 29,612 observed cells with one deterministic representative per terminal state. Of 190 terminal pairs, 185 have identical ancestor groups and five have compatible finer splits; all 13 non-trivial reference ancestor groups are retained. This is a fixed-fit comparison, not a five-fit mean. The panel is S1b, not Fig. 3d.",
+      "width": 1504,
+      "height": 892
+    },
+    "generation-clone-fidelity": {
+      "src": "assets/figures/generation-clone-fidelity.webp",
+      "page": 9,
+      "caption": "Fig. 5d. Original source-clone fate-fidelity comparison for generated D6 states, evaluated against barcode-linked descendants of 530 D2 source cells from 375 test clones. A common probability readout fitted on 172 development clones estimates neutrophil, monocyte and other-fate proportions. Filled symbols and whiskers summarize three technical seeds (42–44); the open diamond shows the shuffled control. Lower mean clone-level total variation indicates greater agreement.",
+      "width": 1150,
+      "height": 565
     }
   },
   "structureValidation": {
