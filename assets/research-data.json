@@ -619,6 +619,396 @@
       "caption": "Figure 1. Source-anchored generation conditioned on hierarchical paths.",
       "width": 1344,
       "height": 1206
+    },
+    "clonal-fates": {
+      "src": "assets/figures/clonal-fates.webp",
+      "page": 8,
+      "caption": "Figure 4. Barcode-linked descendants validate fate predictions from early cell states. Representation fitting uses RNA from all three days.",
+      "width": 1596,
+      "height": 2156
+    },
+    "lineage-topology": {
+      "src": "assets/figures/lineage-topology.webp",
+      "page": 7,
+      "caption": "Figure 3c. Ground-truth and recovered CT34 topology in the displayed seed-44 fit. All three graphs use the same reference-state coordinates.",
+      "width": 1582,
+      "height": 764
+    },
+    "ct34-state-maps": {
+      "src": "assets/figures/ct34-state-maps.webp",
+      "page": 6,
+      "caption": "Figure 2a upper row. Same 100,000 CT34 cells, coloured by 34 reference states. Columns are CellRank 2, StaVia, Monocle3 and sclineage.",
+      "width": 1474,
+      "height": 361
+    },
+    "ct34-time-maps": {
+      "src": "assets/figures/ct34-time-maps.webp",
+      "page": 6,
+      "caption": "Figure 2a lower row with original method headers. Same 100,000 CT34 cells, coloured by developmental time. Columns are CellRank 2, StaVia, Monocle3 and sclineage.",
+      "width": 1474,
+      "height": 375
+    },
+    "ct34-temporal-ordering": {
+      "src": "assets/figures/ct34-temporal-ordering.webp",
+      "page": 6,
+      "caption": "Figure 2d. Within-lineage graph distance and reference developmental time. Three retrospectively selected illustrative lineages and all 20 lineage correlations in the displayed seed-45 fit.",
+      "width": 1593,
+      "height": 442
+    },
+    "topology-ground-truth": {
+      "src": "assets/figures/topology-ground-truth.webp",
+      "page": 7,
+      "caption": "Figure 3c. Ground truth CT34 topology. Displayed seed-44 fit, common reference-state node coordinates.",
+      "width": 600,
+      "height": 580
+    },
+    "topology-stavia": {
+      "src": "assets/figures/topology-stavia.webp",
+      "page": 7,
+      "caption": "Figure 3c. StaVia CT34 topology. Displayed seed-44 fit, common reference-state node coordinates.",
+      "width": 600,
+      "height": 580
+    },
+    "topology-sclineage": {
+      "src": "assets/figures/topology-sclineage.webp",
+      "page": 7,
+      "caption": "Figure 3c. sclineage CT34 topology. Displayed seed-44 fit, common reference-state node coordinates.",
+      "width": 600,
+      "height": 580
+    },
+    "gene-mean-expression": {
+      "src": "assets/figures/gene-mean-expression.webp",
+      "page": 9,
+      "caption": "Figure 5e. Predicted versus observed population-mean logCP10K gene expression at each held-out day. Seed 42; 2,002 genes. Square-root display spacing expands low-expression values.",
+      "width": 1579,
+      "height": 564
+    },
+    "biology-programs": {
+      "src": "assets/figures/biology-programs.webp",
+      "page": 39,
+      "caption": "Supplementary Figure S8a–c. Cell-type composition and predefined progenitor, monocyte and neutrophil programs across the three held-out-day tasks. Three repetitions; sample standard deviations.",
+      "width": 1586,
+      "height": 1544
+    },
+    "matched-ot-cfm": {
+      "src": "assets/figures/matched-ot-cfm.webp",
+      "page": 45,
+      "caption": "Supplementary Figure S14. Matched-population comparison with OT-CFM across three tasks and five metrics. Means and sample standard deviations across three seeds.",
+      "width": 1586,
+      "height": 595
     }
+  },
+  "structureValidation": {
+    "dataset": "CT34",
+    "scope": "Separate selected-region route examples, one displayed graph fit, and five-fit aggregate scores; these are distinct evaluations.",
+    "selectedRegionRoutes": {
+      "sources": [
+        "Fig. 3a (pages 7 and 10)",
+        "Supplementary Figs. S1a and S9d (pages 32 and 40)"
+      ],
+      "scope": "Two retrospectively selected local regions; counts are not whole-dataset recovery rates. Non-reference transitions count distinct cell-to-cell edges crossing directed state transitions absent from the reference.",
+      "fitSeed": 43,
+      "regions": [
+        {
+          "region": "I",
+          "referenceRouteCount": 2,
+          "referenceSequences": [
+            [
+              "S04",
+              "S06",
+              "S08",
+              "S09"
+            ],
+            [
+              "S04",
+              "S06",
+              "S08",
+              "S10"
+            ]
+          ],
+          "rows": [
+            {
+              "method": "CellRank 2",
+              "completeRoutes": 0,
+              "nonReferenceTransitions": 10,
+              "supportGraphBridges": 0
+            },
+            {
+              "method": "StaVia",
+              "completeRoutes": 0,
+              "nonReferenceTransitions": 5,
+              "supportGraphBridges": 0
+            },
+            {
+              "method": "Monocle3",
+              "completeRoutes": 0,
+              "nonReferenceTransitions": 3,
+              "supportGraphBridges": 0
+            },
+            {
+              "method": "sclineage",
+              "completeRoutes": 2,
+              "nonReferenceTransitions": 0,
+              "supportGraphBridges": 0
+            }
+          ]
+        },
+        {
+          "region": "II",
+          "referenceRouteCount": 3,
+          "rows": [
+            {
+              "method": "CellRank 2",
+              "completeRoutes": 0,
+              "nonReferenceTransitions": 3,
+              "supportGraphBridges": 0
+            },
+            {
+              "method": "StaVia",
+              "completeRoutes": 2,
+              "nonReferenceTransitions": 2,
+              "supportGraphBridges": 1
+            },
+            {
+              "method": "Monocle3",
+              "completeRoutes": 0,
+              "nonReferenceTransitions": 9,
+              "supportGraphBridges": 2
+            },
+            {
+              "method": "sclineage",
+              "completeRoutes": 3,
+              "nonReferenceTransitions": 0,
+              "supportGraphBridges": 0
+            }
+          ]
+        }
+      ]
+    },
+    "displayedTopology": {
+      "sources": [
+        "Fig. 3c (pages 7 and 10)",
+        "Results (page 3)"
+      ],
+      "scope": "One displayed fit, seed 44, using 60 fixed native root-to-terminal queries and common coordinates for all 34 states. Extra connections include additional or reversed edges. These counts and F1 scores are not five-fit means.",
+      "fitSeed": 44,
+      "referenceStates": 34,
+      "referenceDirectedEdges": 33,
+      "nativeRootToTerminalQueries": 60,
+      "rows": [
+        {
+          "method": "Reference",
+          "correctDirectedEdges": 33,
+          "extraOrReversedEdges": 0,
+          "directedEdgeF1": 1.0,
+          "interpretation": "Reference compared with itself."
+        },
+        {
+          "method": "StaVia",
+          "correctDirectedEdges": 25,
+          "extraOrReversedEdges": 39,
+          "directedEdgeF1": 0.515
+        },
+        {
+          "method": "sclineage",
+          "correctDirectedEdges": 23,
+          "extraOrReversedEdges": 14,
+          "directedEdgeF1": 0.657
+        }
+      ]
+    },
+    "branchLocalization": {
+      "sources": [
+        "Fig. 3b (pages 7 and 10)",
+        "Results (page 3)",
+        "Supplementary Fig. S9b (page 40)"
+      ],
+      "metric": "Branch-localization F1",
+      "direction": "higher is better",
+      "summary": "mean across five technical fits",
+      "fitSeeds": [
+        44,
+        45,
+        46,
+        47,
+        48
+      ],
+      "rows": [
+        {
+          "method": "CellRank 2",
+          "mean": 0.428
+        },
+        {
+          "method": "sclineage",
+          "mean": 0.695
+        }
+      ],
+      "scope": "Selected explicitly reported numerical comparison; not a complete numerical transcription of every method in Fig. 3b."
+    },
+    "terminalAncestry": {
+      "sources": [
+        "Results (page 3)",
+        "Supplementary Fig. S1b (page 32)"
+      ],
+      "scope": "Fixed seed-44 terminal-state skeleton, one deterministic representative for each of 20 terminal states. Pair counts are not averaged over technical fits.",
+      "fitSeed": 44,
+      "terminalStates": 20,
+      "terminalPairs": 190,
+      "sameAncestorGroupPairs": 185,
+      "compatibleFinerSplitPairs": 5,
+      "referenceNonTrivialAncestorGroups": 13,
+      "retainedNonTrivialAncestorGroups": 13
+    }
+  },
+  "fateReadouts": {
+    "dataset": "LARRY",
+    "sources": [
+      "Fig. 4 (pages 8, 10 and 11)",
+      "Supplementary Fig. S10 (page 41)"
+    ],
+    "scope": "Representation and hierarchy fitting used RNA from all three days (D2, D4 and D6). Barcodes, sampling days and cell-state labels were excluded from representation learning. Sampling days and mature D6 annotations subsequently informed fate readouts. This is transductive representation evaluation with held-out clone groups, distinct from held-out-day generation.",
+    "developmentCloneFraction": 0.3,
+    "testCloneFraction": 0.7,
+    "cloneEligibility": "At least one cell at the early time point and at least three mature D6 descendants; early-cell predictions are averaged within each clone.",
+    "nativeTV": {
+      "sources": [
+        "Fig. 4d (pages 8 and 10)",
+        "Supplementary Fig. S10a (page 41)"
+      ],
+      "window": "D4 to D6",
+      "testClones": 978,
+      "metric": "Mean total-variation distance",
+      "direction": "lower is better",
+      "fates": [
+        "Neutrophil",
+        "Monocyte",
+        "Other"
+      ],
+      "scope": "Each method uses its native fate readout. Mean error compares predicted and barcode-linked observed three-fate proportions, with clones weighted equally.",
+      "rows": [
+        {
+          "method": "CellRank 2",
+          "mean": 0.312
+        },
+        {
+          "method": "StaVia",
+          "mean": 0.291
+        },
+        {
+          "method": "Monocle3",
+          "mean": 0.276
+        },
+        {
+          "method": "sclineage",
+          "mean": 0.242
+        }
+      ],
+      "uncertainty": {
+        "method": "Paired clone bootstrap",
+        "resamples": 20000,
+        "confidenceLevel": 0.95,
+        "intervalType": "percentile",
+        "scope": "Clone-sampling uncertainty with fitted predictions held fixed; numerical native-TV intervals are not transcribed here."
+      }
+    },
+    "commonAP": {
+      "sources": [
+        "Fig. 4e (pages 8, 10 and 11)",
+        "Supplementary Fig. S10b (page 41)",
+        "Results (page 3)"
+      ],
+      "metric": "Macro average precision",
+      "direction": "higher is better",
+      "matureFateCount": 10,
+      "readout": "Shared day-ordered readout",
+      "positiveDefinition": "For each fate, a clone is positive if at least one sampled mature D6 descendant has that annotation.",
+      "windows": [
+        {
+          "window": "D2 to D6",
+          "testClones": 375,
+          "rows": [
+            {
+              "method": "Diffusion",
+              "macroAP": 0.369
+            },
+            {
+              "method": "PCA64",
+              "macroAP": 0.362
+            },
+            {
+              "method": "sclineage",
+              "macroAP": 0.409
+            }
+          ],
+          "pairedDifference": {
+            "comparison": "sclineage minus Diffusion",
+            "difference": 0.04,
+            "confidenceLevel": 0.95,
+            "lower": 0.003,
+            "upper": 0.102
+          },
+          "retainedBootstrapDraws": 619
+        },
+        {
+          "window": "D4 to D6",
+          "testClones": 978,
+          "rows": [
+            {
+              "method": "Diffusion",
+              "macroAP": 0.532
+            },
+            {
+              "method": "PCA64",
+              "macroAP": 0.501
+            },
+            {
+              "method": "sclineage",
+              "macroAP": 0.556
+            }
+          ],
+          "pairedDifference": {
+            "comparison": "sclineage minus Diffusion",
+            "difference": 0.024,
+            "confidenceLevel": 0.95,
+            "lower": 0.007,
+            "upper": 0.081
+          },
+          "retainedBootstrapDraws": 634
+        }
+      ],
+      "uncertainty": {
+        "method": "Paired clone-group bootstrap",
+        "attemptedDrawsPerWindow": 1000,
+        "retentionRule": "Both positive and negative clones must be present for all ten fates.",
+        "intervalType": "percentile",
+        "scope": "Intervals quantify clone-sampling uncertainty for the paired AP difference, with fitted predictions held fixed; they are not confidence intervals for each individual AP score."
+      }
+    }
+  },
+  "biologicalCompositionExample": {
+    "sources": [
+      "Supplementary Fig. S8a (page 39)"
+    ],
+    "dataset": "LARRY",
+    "task": "D6 forward extrapolation",
+    "cellType": "Neutrophil",
+    "unit": "percent",
+    "scope": "The common readout assigns 21.07% of observed D6 cells to neutrophils; their annotation-based percentage is separately 21.64%. Generated percentages are means across three repetitions of 4,000 cells each.",
+    "observedAnnotationPercent": 21.64,
+    "observedCommonReadoutPercent": 21.07,
+    "generatedRows": [
+      {
+        "method": "TIGON",
+        "meanPercent": 42.37
+      },
+      {
+        "method": "scDiffEq",
+        "meanPercent": 16.24
+      },
+      {
+        "method": "sclineage",
+        "meanPercent": 24.81
+      }
+    ]
   }
 }

@@ -21,9 +21,10 @@
     language = next;
     document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
     document.body.classList.toggle('lang-zh', next === 'zh');
-    all('[data-i18n]').forEach(node => { node.innerHTML = (next === 'zh' ? chinese[node.dataset.i18n] : english[node.dataset.i18n]) || english[node.dataset.i18n]; });
+    all('[data-i18n]').forEach(node => { node.innerHTML = (next === 'zh' ? (node.dataset.zh || chinese[node.dataset.i18n]) : english[node.dataset.i18n]) || english[node.dataset.i18n]; });
     all('[data-lang]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lang === next)));
     if (data) { updateDepth(depth); updateAblation(condition); updateBenchmark(); }
+    window.ResultsExplorer?.setLanguage(next);
     updatePlayButton();
   }
 
