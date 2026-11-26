@@ -184,7 +184,7 @@
   $('metric-select').addEventListener('change', event => {metric=event.target.value;if(data)updateBenchmark();});
   all('[data-figure]').forEach(button => button.addEventListener('click', () => {
     const displayed = button.querySelector('img');
-    $('large-figure').src = displayed ? displayed.currentSrc || displayed.src : button.dataset.figure;
+    $('large-figure').src = displayed ? displayed.src : button.dataset.figure;
     $('large-figure').alt = displayed ? displayed.alt : button.dataset.caption;
     $('large-caption').textContent = displayed ? displayed.alt : button.dataset.caption;
     const source=$('large-figure').src;

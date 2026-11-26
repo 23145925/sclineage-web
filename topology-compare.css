@@ -1,0 +1,108 @@
+.topology-comparison {
+  margin: 28px 0;
+}
+
+.topology-comparison h4 {
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 8px;
+}
+
+.topology-design {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.topology-plots {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.topology-view {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--line);
+}
+
+.topology-view-head {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 8px 10px;
+  min-height: 46px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--tint, #f6f8fa);
+  border-bottom: 1px solid var(--line);
+}
+
+.topology-view .topology-controls {
+  flex-wrap: nowrap;
+  margin: 0;
+}
+
+.topology-controls button {
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+.topology-view .figure-button {
+  margin: auto 0;
+  padding: 4px;
+  border: 0;
+}
+
+.topology-view img, .topology-view #topology-image {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  margin: 0;
+}
+
+.topology-legend {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  gap: 8px 20px;
+  margin: 14px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.topology-legend li { display: inline-flex; gap: 6px; align-items: center; }
+.topology-legend i { width: 18px; height: 0; border-top: 2px solid; }
+.edge-correct { color: #3c4143; }
+.edge-extra { color: #aa5f93; }
+.edge-reversed { color: #355f82; }
+.topology-legend .edge-missing { color: #838b8c; border-top-style: dashed; }
+
+.topology-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  border-block: 1px solid var(--line);
+  padding: 12px 0;
+  margin: 0;
+  align-items: end;
+}
+.topology-counts dt { color: var(--muted); font-size: 12px; line-height: 1.4; }
+.topology-counts dd { color: var(--ink); margin: 4px 0 0; font-size: 20px; line-height: 1.35; font-variant-numeric: tabular-nums; }
+.topology-counts strong { font: inherit; }
+
+@media (max-width: 650px) {
+  .topology-plots { grid-template-columns: minmax(0, 1fr); }
+  .topology-view-head { min-height: 39px; }
+  .topology-counts dt { font-size: 11px; }
+  .topology-legend { gap: 6px 12px; font-size: 11px; }
+}

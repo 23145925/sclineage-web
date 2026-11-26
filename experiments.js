@@ -5,7 +5,7 @@
   const all=selector=>[...document.querySelectorAll(selector)];
   let data=window.ScLineageData;
   let language=document.documentElement.lang.startsWith('zh')?'zh':'en';
-  let coupling='Hierarchy-aware',path='Full',request='neutrophil',day='D6',metric='recall';
+  let coupling='Hierarchy-aware',path='Full',day='D6',metric='recall';
   const fateColors={neutrophil:'#A85E94',monocyte:'#368882',other:'#BDB8CB'};
   const names={neutrophil:['Neutrophil','中性粒细胞'],monocyte:['Monocyte','单核细胞'],other:['Other','其他']};
   const metricNames={precision:['kNN precision ↑','kNN 精确率 ↑'],recall:['kNN recall ↑','kNN 召回率 ↑'],pearson:['Pearson R ↑','Pearson R ↑'],swd:['Sliced Wasserstein ↓','切片 Wasserstein ↓'],mmd:['RBF-MMD ↓','RBF-MMD ↓']};
@@ -14,30 +14,72 @@
   const make=(tag,className,text)=>{const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node;};
   const select=(key,value)=>all(`[${key}]`).forEach(button=>button.setAttribute('aria-pressed',String(button.getAttribute(key)===value)));
 
-  function renderSwitch() {
-    if(!$('switch-chart')||!data?.branchSwitching)return;
-    const record=data.branchSwitching.rows.find(row=>row.coupling===coupling&&row.path===path);
-    if(!record)return;
-    select('data-switch-coupling',coupling);select('data-switch-path',path);select('data-switch-request',request);
-    const prediction=record[request];
-    const opposite=request==='neutrophil'?'monocyte':'neutrophil';
-    const composition={[request]:prediction.requested,[opposite]:prediction.opposite,other:prediction.other};
-    const total=Object.values(composition).reduce((sum,value)=>sum+value,0);
-    const chart=$('switch-chart');chart.replaceChildren();
-    const bar=make('div','switch-composition');bar.setAttribute('role','img');
-    bar.setAttribute('aria-label',Object.entries(composition).map(([key,value])=>`${names[key][language==='zh'?1:0]} ${value.toFixed(2)}%`).join(', '));
-    for(const key of ['neutrophil','monocyte','other']) {
-      const part=make('span',`switch-segment fate-${key}`);
-      part.style.background=fateColors[key];part.style.width=`${composition[key]/total*100}%`;
-      part.title=`${names[key][language==='zh'?1:0]}: ${composition[key].toFixed(2)}%`;
-      if(composition[key]>=12)part.textContent=`${composition[key].toFixed(1)}%`;
-      bar.append(part);
+
+  function compositionRow(record, requestedFate, tableBody) {
+    const prediction = record[requestedFate];
+    const otherRequest = requestedFate === 'neutrophil' ? 'monocyte' : 'neutrophil';
+    const percentages = {
+      [requestedFate]: prediction.requested,
+      [otherRequest]: prediction.opposite,
+      other: prediction.other
+    };
+    const total = Object.values(percentages).reduce((sum, value) => sum + value, 0);
+    const row = make('div', 'fate-comparison-row');
+    const requestedName = t(...names[requestedFate]);
+    const heading = make('span', 'fate-request-name',
+      t(requestedName + ' request', '请求' + requestedName));
+    const track = make('div', 'switch-composition');
+    const values = make('tr');
+    const requestHeader = make('th', '', requestedName);
+    requestHeader.scope = 'row';
+    values.append(requestHeader);
+    const descriptions = [];
+    for (const [fate, color] of Object.entries(fateColors)) {
+      const value = percentages[fate];
+      const description = t(...names[fate]) + ' ' + value.toFixed(2) + '%';
+      const segment = make('span', 'switch-segment fate-' + fate);
+      segment.style.backgroundColor = color;
+      segment.style.width = (100 * value / total) + '%';
+      segment.title = description;
+      descriptions.push(description);
+      values.append(make('td', '', value.toFixed(2) + '%'));
+      if (value >= 17) segment.textContent = value.toFixed(2) + '%';
+      track.append(segment);
     }
-    const axis=make('div','switch-axis');axis.append(make('span','','0%'),make('span','','50%'),make('span','','100%'));chart.append(bar,axis);
-    const legend=$('switch-legend');if(legend){legend.replaceChildren();for(const key of ['neutrophil','monocyte','other']){const item=make('span');const swatch=make('i');swatch.style.background=fateColors[key];item.append(swatch,document.createTextNode(`${names[key][language==='zh'?1:0]} ${composition[key].toFixed(2)}%`));legend.append(item);}}
-    write('switch-response',t(`Requested ${request} → ${prediction.requested.toFixed(2)}% assigned to the requested fate`,`请求${names[request][1]} → ${prediction.requested.toFixed(2)}% 生成状态被读出为指定命运`));
-    write('switch-effect',t(`Paired switching effect: ${record.switching.toFixed(2)} ± ${record.switchingSd.toFixed(2)} percentage points`,`配对路径切换效应：${record.switching.toFixed(2)} ± ${record.switchingSd.toFixed(2)} 个百分点`));
-    write('switch-note',t(`530 fixed source cells; identical initial noise and target day D6. Mean ± s.d. across 3 technical fits. Paired clone-bootstrap 95% CI: [${record.ci95[0].toFixed(2)}, ${record.ci95[1].toFixed(2)}] percentage points (2,000 resamples). Independent expression readout. This measures model controllability, not the accuracy of predicting real cell fates.`,`530 个固定来源细胞；初始噪声与目标日 D6 保持相同。3 次技术拟合的均值 ± 标准差；配对克隆 bootstrap 95% CI：[${record.ci95[0].toFixed(2)}, ${record.ci95[1].toFixed(2)}] 个百分点（2,000 次重采样）。使用独立表达读出；检验模型可控性，不是对真实细胞命运预测的准确率。`));
+    track.setAttribute('role', 'img');
+    track.setAttribute('aria-label', descriptions.join(', '));
+    row.append(heading, track);
+    tableBody.append(values);
+    return row;
+  }
+
+  function renderSwitch() {
+    const chart = $('switch-chart');
+    const record = data?.branchSwitching?.rows.find(row => row.coupling === coupling && row.path === path);
+    if (!chart || !record) return;
+    select('data-switch-coupling', coupling);
+    select('data-switch-path', path);
+    const tableBody = $('switch-values');
+    tableBody.replaceChildren();
+    chart.replaceChildren(compositionRow(record, 'neutrophil', tableBody), compositionRow(record, 'monocyte', tableBody));
+
+    const legend = $('switch-legend');
+    legend.replaceChildren();
+    for (const [fate, color] of Object.entries(fateColors)) {
+      const item = make('span');
+      const swatch = make('i');
+      swatch.style.backgroundColor = color;
+      item.append(swatch, document.createTextNode(t(...names[fate])));
+      legend.append(item);
+    }
+    const effect = record.switching.toFixed(2) + ' ± ' + record.switchingSd.toFixed(2);
+    const interval = record.ci95.map(value => value.toFixed(2)).join('–');
+    write('switch-effect', t('Paired switching effect ' + effect + ' percentage points',
+      '配对路径切换效应 ' + effect + ' 个百分点'));
+    write('switch-note', t(
+      'An independent expression classifier assigns the generated fates. The effect measures model controllability. Mean ± s.d. over three technical fits. The paired clone-bootstrap 95% interval is ' + interval + ' percentage points (2,000 resamples).',
+      '独立表达分类器判定生成命运，用于衡量模型可控性。数值为三次技术拟合的均值 ± 标准差。配对克隆 bootstrap 的 95% 区间为 ' + interval + ' 个百分点（2,000 次重采样）。'
+    ));
   }
 
   function renderMatched() {
@@ -70,7 +112,6 @@
   const bind=(selector,callback)=>all(selector).forEach(button=>button.addEventListener('click',()=>{callback(button);renderSwitch();renderMatched();}));
   bind('[data-switch-coupling]',button=>{coupling=button.dataset.switchCoupling;});
   bind('[data-switch-path]',button=>{path=button.dataset.switchPath;});
-  bind('[data-switch-request]',button=>{request=button.dataset.switchRequest;});
   bind('[data-matched-task]',button=>{day=button.dataset.matchedTask;});
   $('matched-metric')?.addEventListener('change',event=>{metric=event.target.value;renderMatched();});
   window.addEventListener('sclineage:language',event=>{language=event.detail.language;renderSwitch();renderMatched();});
