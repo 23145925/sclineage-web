@@ -17,6 +17,7 @@
   };
 
   function setLanguage(next) {
+    stopDepth();
     language = next;
     document.documentElement.lang = next === 'zh' ? 'zh-CN' : 'en';
     document.body.classList.toggle('lang-zh', next === 'zh');

@@ -360,7 +360,7 @@
       if (scene.type === 'hero') renderHero(scene);
       else renderTree(scene);
     }
-    if (stamp - state.lastEvent > 80) {
+    if (!isPlaybackVisible() || stamp - state.lastEvent > 80) {
       for (const scene of scenes.values()) {
         if (scene.type === 'hero' && scene.visible) {
           scene.canvas.dispatchEvent(new CustomEvent('sclineage:frame', {
