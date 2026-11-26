@@ -271,7 +271,7 @@
     const { context, width, height } = pairing;
     context.clearRect(0, 0, width, height);
     const rowHeight = height / 6;
-    const color = state.clone === 'matched' ? '#35795d' : '#bd6e48';
+    const color = state.clone === 'matched' ? '#3a63c8' : '#bf814b';
     pairing.current.forEach((target, index) => {
       const fromY = (index + 0.5) * rowHeight;
       const toY = (target + 0.5) * rowHeight;

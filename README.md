@@ -21,3 +21,7 @@ Publish the repository's `main` branch root using GitHub Pages. All asset paths 
 Figure 1 introduces the complete method at the top. Figure 2 tests continuous state organization and developmental order. Figure 3 tests discrete routes, graph connectivity and shared ancestry. Figure 4 validates fate predictions with real clonal barcodes, separating native and common readouts. Figure 5 covers held-out generation, route ablation, source-clone fidelity, population metrics and biological programs; matched OT-CFM, paired path switching and pancreas follow in manuscript Results order.
 
 `results.js` adds reference-state/time coloring, graph comparison, local route recovery, native/common fate readouts and clone-shuffle controls. `story.css` styles the narrative sections. Clone-pairing vectors and canvas animation are labelled schematic; reported numerical endpoints are taken from the manuscript. All content remains static and deployable without a build step.
+
+## Layout reference
+
+At the author's request, the layout and base styles follow the [Kairos research page](https://ykongxiang.github.io/KairosWeb/), adapted to the sclineage figures and interactions. The site uses `reference-layout.css`; earlier design styles are retained as local source history but are not loaded.

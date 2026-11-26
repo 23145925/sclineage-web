@@ -3,14 +3,14 @@
   'use strict';
 
   const palette = {
-    ink: '#193c36',
-    green: '#17765e',
-    greenLight: '#92c1a8',
-    copper: '#b96742',
-    copperLight: '#ddb597',
-    neutral: '#b7c1b7',
-    grid: '#d9dfd3',
-    paper: '#f7f8f1'
+    ink: '#17243b',
+    green: '#3a63c8',
+    greenLight: '#91b6e6',
+    copper: '#bf814b',
+    copperLight: '#e3bd98',
+    neutral: '#aab7c9',
+    grid: '#dfe5ed',
+    paper: '#ffffff'
   };
   const state = {
     depth: 4,
@@ -141,8 +141,8 @@
     {
       const shadow = context.createRadialGradient(width * 0.62, height * 0.79, 0,
         width * 0.62, height * 0.79, width * 0.34);
-      shadow.addColorStop(0, 'rgba(68,100,80,0.045)');
-      shadow.addColorStop(1, 'rgba(68,100,80,0)');
+      shadow.addColorStop(0, 'rgba(71,85,106,0.045)');
+      shadow.addColorStop(1, 'rgba(71,85,106,0)');
       context.save();
       context.translate(width * 0.62, height * 0.79);
       context.scale(1, 0.13);
@@ -202,7 +202,7 @@
     const source = project(0.015, 0, 0, 0, 0, 0, width, height);
     context.beginPath();
     context.arc(source.x, source.y, 5.5 * unit, 0, Math.PI * 2);
-    context.fillStyle = '#f8faf4';
+    context.fillStyle = '#ffffff';
     context.fill();
     context.lineWidth = 1.5;
     context.strokeStyle = palette.ink;
@@ -216,7 +216,7 @@
 
     const cursor = project(travel, -1 + 2 * state.branchMix, 0, 0, 0, 0, width, height);
     const glow = context.createRadialGradient(cursor.x, cursor.y, 2, cursor.x, cursor.y, 25 * unit);
-    glow.addColorStop(0, selectedBranch === -1 ? 'rgba(23,118,94,0.18)' : 'rgba(185,103,66,0.18)');
+    glow.addColorStop(0, selectedBranch === -1 ? 'rgba(58,99,200,0.18)' : 'rgba(191,129,75,0.18)');
     glow.addColorStop(1, 'rgba(255,255,255,0)');
     context.fillStyle = glow;
     context.fillRect(cursor.x - 25 * unit, cursor.y - 25 * unit, 50 * unit, 50 * unit);
@@ -236,11 +236,11 @@
       palette.copper, 'right');
 
     const axisY = height * 0.947;
-    line(context, width * 0.12, axisY, width * 0.85, axisY, '#b9c6b9', 0.7);
-    line(context, width * 0.85, axisY, width * 0.84, axisY - 3, '#b9c6b9', 0.7);
-    line(context, width * 0.85, axisY, width * 0.84, axisY + 3, '#b9c6b9', 0.7);
+    line(context, width * 0.12, axisY, width * 0.85, axisY, '#bdcbe0', 0.7);
+    line(context, width * 0.85, axisY, width * 0.84, axisY - 3, '#bdcbe0', 0.7);
+    line(context, width * 0.85, axisY, width * 0.84, axisY + 3, '#bdcbe0', 0.7);
     text(context, 'Developmental progression', width * 0.485, axisY + 16,
-      compact ? 9 : 10, '#75877a', 'center');
+      compact ? 9 : 10, '#6a788d', 'center');
     context.restore();
   }
 
@@ -268,9 +268,9 @@
       const visibility = clamp(depth - level + 1, 0, 1);
       const node = treePoint(level, 0, depth, width, height);
       context.globalAlpha = visibility;
-      line(context, node.x, height * 0.11, node.x, height * 0.9, '#e2e7dc', 0.5);
+      line(context, node.x, height * 0.11, node.x, height * 0.9, '#e8edf4', 0.5);
       text(context, small ? `L${level}` : `Level ${level}`, node.x, height * 0.06,
-        small ? 9 : 10, '#7c8e80', 'center');
+        small ? 9 : 10, '#6a788d', 'center');
     }
 
     for (let level = 1; level <= levels; level += 1) {
@@ -305,9 +305,9 @@
         context.globalAlpha = visibility;
         context.beginPath();
         context.arc(point.x, point.y, active ? radius + 0.6 : radius, 0, Math.PI * 2);
-        context.fillStyle = level === 0 ? palette.ink : active ? selectedColor : '#f7f8f2';
+        context.fillStyle = level === 0 ? palette.ink : active ? selectedColor : '#ffffff';
         context.fill();
-        context.strokeStyle = level === 0 ? palette.ink : index < count / 2 ? '#8ebaa5' : '#d4a58b';
+        context.strokeStyle = level === 0 ? palette.ink : index < count / 2 ? '#91b6e6' : '#d8b28c';
         context.lineWidth = 0.85;
         context.stroke();
         if (active && level === Math.round(state.depth)) {
@@ -321,11 +321,11 @@
     }
     context.globalAlpha = 1;
     text(context, 'Root', width * 0.075, height * 0.565, 10, palette.ink, 'center');
-    text(context, 'Coarse', width * 0.075, height * 0.96, 10, '#7c8e80', 'center');
-    text(context, 'Fine', width * 0.895, height * 0.96, 10, '#7c8e80', 'center');
-    line(context, width * 0.15, height * 0.96, width * 0.82, height * 0.96, '#d0d9cc', 0.65);
-    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 - 3, '#d0d9cc', 0.65);
-    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 + 3, '#d0d9cc', 0.65);
+    text(context, 'Coarse', width * 0.075, height * 0.96, 10, '#6a788d', 'center');
+    text(context, 'Fine', width * 0.895, height * 0.96, 10, '#6a788d', 'center');
+    line(context, width * 0.15, height * 0.96, width * 0.82, height * 0.96, '#d1dce9', 0.65);
+    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 - 3, '#d1dce9', 0.65);
+    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 + 3, '#d1dce9', 0.65);
     context.restore();
   }
 

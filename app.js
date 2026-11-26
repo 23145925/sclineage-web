@@ -155,7 +155,7 @@
     catch {$('copy-status').textContent = citation;}
   });
   const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {if(entry.isIntersecting)all('.sidebar nav a').forEach(link => {link.classList.toggle('active',link.hash === '#' + entry.target.id);if(link.hash === '#' + entry.target.id)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});});
+    entries.forEach(entry => {if(entry.isIntersecting)all('.sidebar nav a').forEach(link => {link.classList.toggle('active',link.hash === '#' + (entry.target.dataset.navParent || entry.target.id));if(link.hash === '#' + (entry.target.dataset.navParent || entry.target.id))link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});});
   }, {rootMargin:'-15% 0px -65% 0px'});
   all('main>section').forEach(section => observer.observe(section));
   document.addEventListener('visibilitychange', () => {if(document.hidden)stopDepth();});
