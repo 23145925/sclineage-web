@@ -1,0 +1,61 @@
+.measured-replay {
+  --mr-d2: #7b3294;
+  --mr-d4: #008c95;
+  --mr-d6: #6e9b2d;
+  --mr-day: var(--mr-d2);
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  color: var(--ink, #25313c);
+}
+.mr-heading, .mr-toolbar, .mr-routes, .mr-overlay, .mr-playback { display: flex; align-items: center; }
+.mr-heading { justify-content: space-between; gap: 12px; padding: 2px 0 10px; border-bottom: 1px solid var(--line, #e0e5e9); }
+.mr-heading strong { font-size: clamp(15px, 1.3vw, 19px); font-weight: 650; line-height: 1.35; }
+.mr-heading a { white-space: nowrap; font-size: 12px; color: #486b82; text-decoration: underline; text-underline-offset: 3px; }
+.mr-links { display: flex; align-items: center; gap: 12px; }
+.mr-toolbar { justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; padding: 11px 0 2px; }
+.mr-routes { gap: 2px; border: 1px solid #dbe1e5; border-radius: 5px; padding: 2px; }
+.mr-routes button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; color: #5a626c; font: inherit; font-size: 12px; line-height: 1.4; border: 0; border-radius: 3px; }
+.mr-routes button i { width: 6px; height: 6px; background: #368882; border-radius: 50%; }
+.mr-routes [data-mr-route="neutrophil"] i { background: #a85e94; }
+.mr-routes button[aria-pressed="true"] { background: #eaf0f3; color: #243542; font-weight: 650; }
+.mr-overlay { gap: 6px; color: #435260; font-size: 12px; cursor: pointer; line-height: 1.4; }
+.mr-overlay input { width: 14px; height: 14px; min-width: 14px; margin: 0; accent-color: #526a78; }
+.mr-stage { position: relative; width: 100%; margin: 5px 0; }
+.mr-stage canvas { display: block; width: 100%; height: clamp(246px, 22vw, 335px); }
+.mr-stage-label { pointer-events: none; position: absolute; right: 5px; bottom: 12px; z-index: 1; text-align: right; padding: 2px 0 2px 6px; background: rgba(255,255,255,.88); }
+.mr-stage-label .mr-day { color: var(--mr-day); font-size: 27px; font-weight: 650; line-height: 1.1; letter-spacing: -.04em; }
+.mr-stage-label>strong, .mr-stage-label>span { display: block; font-size: 11px; line-height: 1.5; }
+.mr-stage-label>strong { font-weight: 600; }
+.mr-stage-label>span { color: #62717b; font-variant-numeric: tabular-nums; }
+.mr-load { position: absolute; inset: 40% 0 auto; text-align: center; font-size: 13px; }
+.mr-playback { gap: 10px; padding: 7px 0 0; border-top: 1px solid #dbe1e5; }
+.mr-play { display: grid; place-items: center; flex: 0 0 37px; width: 37px; height: 37px; color: #314c5e; border: 1px solid #cbd5dd; border-radius: 50%; background: #fff; }
+.mr-play-icon { display: block; width: 0; height: 0; border: 0 solid transparent; border-width: 5px 0 5px 8px; border-left-color: currentColor; margin-left: 2px; }
+.mr-play[data-playing="true"] .mr-play-icon { width: 8px; height: 10px; margin: 0; border: solid currentColor; border-width: 0 3px; }
+.mr-days { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; flex: 1; min-width: 0; }
+.mr-days button { --day-ink: var(--mr-d2); display: grid; grid-template-columns: auto 1fr; align-content: center; justify-items: start; align-items: center; column-gap: 5px; min-width: 0; text-align: left; padding: 5px clamp(4px,.6vw,11px); color: #3e4c55; border: 0; border-bottom: 2px solid transparent; border-radius: 3px 3px 0 0; font: inherit; }
+.mr-days [data-mr-day="D4"] { --day-ink: var(--mr-d4); }
+.mr-days [data-mr-day="D6"] { --day-ink: var(--mr-d6); }
+.mr-days button[aria-pressed="true"] { background: #f3f5f6; border-color: var(--day-ink); }
+.mr-days button i { display: block; width: 7px; height: 7px; background: var(--day-ink); border-radius: 50%; }
+.mr-days [data-mr-day="D4"] i { border-radius: 0; }
+.mr-days [data-mr-day="D6"] i { border-radius: 0; clip-path: polygon(50% 0,100% 100%,0 100%); }
+.mr-days button b { font-size: 13px; line-height: 1.3; }
+.mr-days button span { grid-column: 1/-1; font-size: 11px; line-height: 1.5; color: #5a6770; }
+.measured-replay .mr-caption,.mr-fallback p { margin: 9px 0 0; font-size: 12px; line-height: 1.6; color: #556672; }
+.measured-replay [hidden] { display: none; }
+.measured-replay button:enabled, .mr-overlay { cursor: pointer; }
+.measured-replay button:enabled:hover { background: #eaf0f3; }
+.measured-replay button:focus-visible,.mr-overlay input:focus-visible,.mr-heading a:focus-visible { outline: 2px solid #486b82; outline-offset: 2px; }
+.mr-fallback img { width: min(100%,550px); margin: auto; height: auto; }
+@media (max-width: 650px) {
+  .mr-heading strong { font-size: 16px; }
+  .mr-toolbar { gap: 6px; }
+  .mr-routes button { padding: 5px 6px; }
+  .mr-stage canvas { height: clamp(218px,64vw,295px); }
+  .mr-playback { gap: 7px; }
+  .mr-days button { padding: 5px; }
+  .mr-overlay,.mr-caption { font-size: 11px; }
+  .mr-stage-label .mr-day { font-size: 22px; }
+}
