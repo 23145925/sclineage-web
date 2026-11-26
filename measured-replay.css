@@ -16,7 +16,7 @@
 .mr-toolbar { justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; padding: 11px 0 2px; }
 .mr-routes { gap: 2px; border: 1px solid #dbe1e5; border-radius: 5px; padding: 2px; }
 .mr-routes button { display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; color: #5a626c; font: inherit; font-size: 12px; line-height: 1.4; border: 0; border-radius: 3px; }
-.mr-routes button i { width: 6px; height: 6px; background: #368882; border-radius: 50%; }
+.mr-routes button i { width: 11px; height: 3px; background: #368882; border-radius: 2px; }
 .mr-routes [data-mr-route="neutrophil"] i { background: #a85e94; }
 .mr-routes button[aria-pressed="true"] { background: #eaf0f3; color: #243542; font-weight: 650; }
 .mr-overlay { gap: 6px; color: #435260; font-size: 12px; cursor: pointer; line-height: 1.4; }
@@ -53,6 +53,7 @@
   .mr-heading strong { font-size: 16px; }
   .mr-toolbar { gap: 6px; }
   .mr-routes button { padding: 5px 6px; }
+  .mr-overlay { margin-left: auto; }
   .mr-stage canvas { height: clamp(218px,64vw,295px); }
   .mr-playback { gap: 7px; }
   .mr-days button { padding: 5px; }

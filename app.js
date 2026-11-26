@@ -218,7 +218,12 @@
   menu?.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));sidebar?.classList.toggle('menu-open',open);});
   all('.sidebar a[href^="#"]').forEach(link=>link.addEventListener('click',closeMenu));
   document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMenu();});
-  const compact=()=>document.body.classList.toggle('is-scrolled',scrollY>40);window.addEventListener('scroll',compact,{passive:true});compact();
+  function updateCompactNavigation() {
+    if (scrollY > 60) document.body.classList.add('is-scrolled');
+    else if (scrollY < 20) document.body.classList.remove('is-scrolled');
+  }
+  window.addEventListener('scroll', updateCompactNavigation, {passive: true});
+  updateCompactNavigation();
   $('copy-citation').addEventListener('click', async () => {
     const citation = 'Yan, X., Ling, B. W.-K., Yang, F., Li, S. Z. & Zang, Z. sclineage integrates hierarchical lineage inference with conditional cell-state generation. Research manuscript.';
     try {await navigator.clipboard.writeText(citation);$('copy-status').textContent = language === 'zh' ? '稿件引用已复制。' : 'Manuscript citation copied.';}

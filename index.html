@@ -6,8 +6,8 @@
 <title>sclineage · Hierarchical lineage inference and cell-state generation</title>
 <meta content="Explore hierarchical cell-state organization and path-conditioned generation with sclineage. An interactive companion to the research manuscript." name="description"/>
 <meta content="#ffffff" name="theme-color"/>
-<script defer="" src="visuals.js?v=0eec802c2a"></script><script defer="" src="results.js?v=d9f7cfb6d2"></script><script defer="" src="experiments.js?v=9407fcf3b5"></script><script defer="" src="generation-view.js?v=bf68065ded"></script><script defer="" src="measured-replay.js?v=14376dbd03"></script><script defer="" src="app.js?v=61a9efc37a"></script>
-<link href="results.css?v=ae7cddc038" rel="stylesheet"/><link href="reference-layout.css?v=2331a4915c" rel="stylesheet"/><link href="experience.css?v=7bdf964ef4" rel="stylesheet"/><link href="topology-compare.css?v=36bf25f6d4" rel="stylesheet"/><link href="measured-replay.css?v=fd41a4321c" rel="stylesheet"/></head>
+<script defer="" src="visuals.js?v=0eec802c2a"></script><script defer="" src="results.js?v=d9f7cfb6d2"></script><script defer="" src="experiments.js?v=9407fcf3b5"></script><script defer="" src="generation-view.js?v=bf68065ded"></script><script defer="" src="measured-replay.js?v=29ae6fd31c"></script><script defer="" src="app.js?v=bedb8a4afe"></script>
+<link href="results.css?v=ae7cddc038" rel="stylesheet"/><link href="reference-layout.css?v=2331a4915c" rel="stylesheet"/><link href="experience.css?v=7bdf964ef4" rel="stylesheet"/><link href="topology-compare.css?v=36bf25f6d4" rel="stylesheet"/><link href="measured-replay.css?v=41025c7ea8" rel="stylesheet"/></head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <aside class="sidebar">
@@ -18,13 +18,14 @@
 <main id="main">
 <section class="hero section" id="overview"><div class="hero-copy"><span class="eyebrow" data-i18n="heroTag" data-zh="sclineage">sclineage</span><h1 data-i18n="heroTitle" data-zh="从细胞状态快照到路径条件生成">From cell-state snapshots to path-conditioned generation</h1><p class="lead" data-i18n="heroLead" data-zh="sclineage 从单细胞表达数据中学习层级路径，并以路径为条件，生成未观测时间点的细胞状态。">sclineage learns hierarchical paths from single-cell expression data and uses them to condition cell-state generation at unobserved time points.</p><div class="hero-actions"><a class="primary button hero-cta" data-i18n="heroCta" data-zh="研究结果 &lt;span&gt;↓&lt;/span&gt;" href="#core">Results <span>↓</span></a><a class="text-link" data-i18n="heroResource" data-zh="研究资料 ↗" href="#resources">Research materials ↗</a></div></div><figure aria-labelledby="mr-title" class="measured-replay" data-src="assets/larry-fig5b.json?v=cb655cc2ff" id="measured-replay">
 <figcaption class="mr-heading">
-<strong data-mr-label="title" id="mr-title">Two fate requests, one D2 source population</strong>
-<span class="mr-links"><a data-mr-label="figure" href="#generation-map-explorer">Fig. 5b ↗</a><a data-mr-label="gif" download="" href="assets/larry-forward-replay.gif?v=f84e0f59a9">GIF ↓</a></span>
+<strong data-mr-label="title" id="mr-title">Two branches from one D2 population</strong>
+<span class="mr-links"><a data-mr-label="figure" href="#generation-map-explorer">Fig. 5b ↗</a><a data-mr-label="gif" download="" href="assets/larry-forward-replay.gif?v=7a90b53a2c">GIF ↓</a></span>
 </figcaption>
 <div class="mr-interactive">
 <div class="mr-toolbar">
 <div aria-label="Requested route" class="mr-routes" data-mr-aria="route" role="group">
-<button aria-pressed="true" data-mr-route="monocyte" disabled="" type="button"><i aria-hidden="true"></i><span data-mr-label="monocyte">Monocyte</span></button>
+<button aria-pressed="true" data-mr-route="both" disabled="" type="button"><span data-mr-label="both">Both paths</span></button>
+<button aria-pressed="false" data-mr-route="monocyte" disabled="" type="button"><i aria-hidden="true"></i><span data-mr-label="monocyte">Monocyte</span></button>
 <button aria-pressed="false" data-mr-route="neutrophil" disabled="" type="button"><i aria-hidden="true"></i><span data-mr-label="neutrophil">Neutrophil</span></button>
 </div>
 <label class="mr-overlay">
@@ -35,7 +36,7 @@
 <div class="mr-stage">
 <div class="mr-stage-label">
 <div class="mr-day" data-mr-active-day="">D2</div>
-<strong data-mr-state="">Shared observed source</strong>
+<strong data-mr-state="">Observed source</strong>
 <span data-mr-count=""></span>
 </div>
 <canvas aria-label="LARRY cells in the reference UMAP" data-mr-canvas="" role="img"></canvas>
@@ -49,11 +50,12 @@
 <button aria-pressed="false" data-mr-day="D6" disabled="" type="button"><i aria-hidden="true"></i><b>D6</b><span data-mr-label="shortD6">Held-out day</span></button>
 </div>
 </div>
-<p class="mr-caption"><span data-mr-label="caption">Grey dots show 2,949 observed LARRY cells. Each frame shows the population at one sampling day.</span> <span data-mr-outline-note=""></span></p>
+<p class="mr-caption"><span data-mr-label="caption">Branches connect population medians at D2, D4 and D6. Grey dots show 2,949 observed LARRY cells.</span> <span data-mr-outline-note=""></span></p>
 </div>
 <div class="mr-fallback" hidden="">
 <img alt="Fig. 5b · Observed D2 source and generated D4 and D6 states for the monocyte route." height="460" loading="lazy" src="assets/figures/generation-view-d6-monocyte.webp?v=5780910fdf" width="700"/>
-<p data-mr-label="fallback">The replay could not load. This Fig. 5b panel shows all three days for the monocyte route.</p>
+<p data-mr-label="fallback">Interactive coordinates could not load. The original panel shows the monocyte route.</p>
+<a data-mr-label="fallbackGif" href="assets/larry-forward-replay.gif?v=7a90b53a2c">Open the recorded branch animation ↗</a>
 </div>
 <noscript><p><a href="#generation-map-explorer">View the original Fig. 5b panels ↗</a></p></noscript>
 </figure><div class="hero-meta"><p class="authors">Xichen Yan · Bingo Wing-Kuen Ling · Fuji Yang<br/>Stan Z. Li · Zelin Zang</p></div></section><section class="section chapter-card" id="core"><div class="section-intro"><p class="eyebrow" data-i18n="coreTag" data-zh="核心实验">KEY EXPERIMENTS</p><h2 class="" data-i18n="coreTitle" data-zh="路径控制、群体覆盖与克隆对应">Path control, population coverage and clone fidelity</h2><div class="experiment-index"><a data-i18n="jumpPath" data-zh="路径切换" href="#path-experiment-slot">Path switching</a><a data-i18n="jumpPop" data-zh="群体覆盖" href="#population-benchmark">Population coverage</a><a data-i18n="jumpMatched" data-zh="匹配 OT-CFM" href="#matched-experiment-slot">Matched OT-CFM</a><a data-i18n="jumpClone" data-zh="来源克隆" href="#clone-fidelity">Clone fidelity</a></div></div><div class="chapter-evidence"><div class="core-experiment" id="path-experiment-slot"><h3 data-i18n="path-experiment-slotTitle" data-zh="改变请求命运，生成结果如何变化？">How does the requested fate change the output?</h3><p data-i18n="path-experiment-slotLead" data-zh="两种命运请求使用相同的 530 个来源细胞、初始噪声与 D6 目标日。切换路径输入，比较两行预测的命运分布。">Both requests use the same 530 source cells, initial noise and D6 target. Compare the predicted fate distributions with or without path input.</p><div class="experiment-explorer" id="path-controls-fragment">
