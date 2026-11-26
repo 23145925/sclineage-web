@@ -8,7 +8,7 @@
   const assets = 'assets/figures/';
   const state = {
     language: document.documentElement.lang.startsWith('zh') ? 'zh' : 'en',
-    map: 'state', topology: 'reference', region: 'I',
+    map: 'state', mapMethod: matchMedia('(max-width:650px)').matches ? 'sclineage' : 'all', topology: 'reference', region: 'I',
     fate: 'native', day: 'D4', clone: 'matched'
   };
   let initialized = false;
@@ -43,8 +43,8 @@
       nativeHeadline: '0.242 mean TV · 978 test clones',
       nativeNote: 'Native readouts for D4 → D6. Representations use D2/D4/D6 RNA. Held-out clone fates come from barcoded descendants. Fig. 4d.',
       commonNote: 'Shared day-ordered readout for ten fates, using D2/D4/D6 RNA. Paired clone-bootstrap 95% CI measures the AP gain over Diffusion. Fig. 4e.',
-      clonedMatched: '−0.19609 TV versus shuffled',
-      clonedShuffled: '+0.19609 TV after shuffling',
+      clonedMatched: '−0.196 TV versus shuffled',
+      clonedShuffled: '+0.196 TV after shuffling',
       cloneNote: '375 test clones, 530 D2 sources. D2/D4-trained generation is scored against barcoded D6 descendants. Shuffling whole fate vectors preserves clone-averaged composition. Fig. 5d, Supplementary Fig. S13a.',
       source: 'Source clones', vector: 'Predicted fate vectors', clone: 'Clone',
       schematic: 'Schematic pairing · illustrative fate vectors',
@@ -65,8 +65,8 @@
       nativeHeadline: '平均 TV 0.242 · 978 个测试克隆',
       nativeNote: 'D4 → D6 · 各自读出。D2/D4/D6 RNA 拟合表征，条形码后代验证留出克隆命运。图 4d。',
       commonNote: '十种命运共享按日读出，表征使用 D2/D4/D6 RNA。95% CI 为相对 Diffusion 的配对克隆 bootstrap AP 差异区间。图 4e。',
-      clonedMatched: '比打乱对照低 0.19609 TV',
-      clonedShuffled: '打乱后 TV 增加 0.19609',
+      clonedMatched: '比打乱对照低 0.196 TV',
+      clonedShuffled: '打乱后 TV 增加 0.196',
       cloneNote: '375 个测试克隆，530 个 D2 起始细胞。D2/D4 训练生成模型，以条形码 D6 后代评估。打乱完整命运向量保留按克隆平均的预测组成。图 5d、补图 S13a。',
       source: '来源克隆', vector: '预测命运向量', clone: '克隆',
       schematic: '配对示意 · 示例命运向量',
@@ -95,8 +95,12 @@
   }
   function renderState() {
     selectButtons('data-state-view', state.map);
-    image('state-map', state.map === 'state' ? 'ct34-state-maps.webp' : 'ct34-time-maps.webp',
-      copy(state.map === 'state' ? 'stateAlt' : 'timeAlt'));
+    selectButtons('data-map-method', state.mapMethod);
+    const names={cellrank:'CellRank 2',cellrank2:'CellRank 2',stavia:'StaVia',monocle3:'Monocle3',sclineage:'sclineage'};
+    const methodKey=state.mapMethod==='cellrank'?'cellrank2':state.mapMethod;
+    const path=state.mapMethod==='all'?`ct34-${state.map}-maps.webp`:`ct34-${state.map}-${methodKey}.webp`;
+    image('state-map',path,state.mapMethod==='all'?copy(state.map==='state'?'stateAlt':'timeAlt'):`${names[state.mapMethod]} · CT34 · ${state.language==='zh'?(state.map==='state'?'参考状态':'发育时间'):(state.map==='state'?'Reference state':'Developmental time')}`);
+    byId('state-map')?.closest('.map-stage')?.classList.toggle('single-map',state.mapMethod!=='all');
     write('state-view-note', copy(state.map === 'state' ? 'stateNote' : 'timeNote'));
   }
   function renderTopology() {
@@ -158,6 +162,8 @@
       row.append(element('span', 'rx-bar-name', name));
       const track = element('div', 'rx-bar-track');
       const fill = element('div', 'rx-bar-fill');
+      const colors={'CellRank 2':'#8CAAC1',StaVia:'#AACAC4',Monocle3:'#C7CCD6',sclineage:'#D89A7C',Diffusion:'#5A788D',PCA64:'#75808A'};
+      fill.style.background = name==='sclineage'&&state.fate==='common'?'#AD7358':colors[name];
       fill.style.width = `${values[index] / maximum * 100}%`;
       track.setAttribute('aria-hidden', 'true');
       track.append(fill);
@@ -208,6 +214,7 @@
     values.forEach((value, index) => {
       const segment = element('span', `rx-fate-${index}`);
       segment.style.width = `${value * 100}%`;
+      segment.style.background = ['#A85E94','#368882','#BDB8CB'][index];
       bar.append(segment);
     });
     return bar;
@@ -240,7 +247,8 @@
       const item = element('span');
       const label = element('span');
       legendLabels.push([label, key]);
-      item.append(element('i', `rx-fate-${index}`), label);
+      const swatch=element('i', `rx-fate-${index}`);swatch.style.background=['#A85E94','#368882','#BDB8CB'][index];
+      item.append(swatch, label);
       legend.append(item);
     });
     const marginal = element('div', 'rx-marginal');
@@ -271,7 +279,7 @@
     const { context, width, height } = pairing;
     context.clearRect(0, 0, width, height);
     const rowHeight = height / 6;
-    const color = state.clone === 'matched' ? '#24765b' : '#bf814b';
+    const color = state.clone === 'matched' ? '#667886' : '#9b9299';
     pairing.current.forEach((target, index) => {
       const fromY = (index + 0.5) * rowHeight;
       const toY = (target + 0.5) * rowHeight;
@@ -346,6 +354,8 @@
     if (initialized) return;
     initialized = true;
     bind('data-state-view', 'map', ['state', 'time'], renderState);
+    bind('data-map-method', 'mapMethod', ['all','cellrank','cellrank2','stavia','monocle3','sclineage'], renderState);
+    if(matchMedia('(max-width:650px)').matches) state.mapMethod='sclineage';
     bind('data-topology', 'topology', ['reference', 'sclineage', 'stavia'], renderTopology);
     bind('data-region', 'region', ['I', 'II'], renderRegion);
     bind('data-fate-view', 'fate', ['native', 'common'], renderFates);

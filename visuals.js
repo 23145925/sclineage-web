@@ -3,13 +3,14 @@
   'use strict';
 
   const palette = {
-    ink: '#183b32',
-    green: '#24765b',
-    greenLight: '#9bc9b6',
-    copper: '#bf814b',
-    copperLight: '#e3bd98',
-    neutral: '#b2c7bf',
-    grid: '#dbe7e0',
+    ink: '#26323b',
+    // Fate colors match the current manuscript's Fig. 4b/c.
+    monocyte: '#368882',
+    monocyteLight: '#9ec6c2',
+    neutrophil: '#A85E94',
+    neutrophilLight: '#d4abc9',
+    neutral: '#9aa2aa',
+    grid: '#dce1e5',
     paper: '#ffffff'
   };
   const state = {
@@ -17,6 +18,7 @@
     drawnDepth: 4,
     branch: 'monocyte',
     branchMix: 0,
+    language: 'en',
     time: 0.38,
     playing: true,
     lastStamp: 0,
@@ -27,6 +29,19 @@
   const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   let reducedMotion = motionQuery.matches;
   let disposed = false;
+  const labels = {
+    en: {
+      source: 'Fixed source', requested: 'Requested path',
+      monocyte: 'Monocyte', neutrophil: 'Neutrophil',
+      progression: 'Flow progression', root: 'Root', coarse: 'Coarse', fine: 'Fine', level: 'Level'
+    },
+    zh: {
+      source: '固定起点', requested: '指定路径',
+      monocyte: '单核细胞', neutrophil: '中性粒细胞',
+      progression: '流的积分进程', root: '根节点', coarse: '粗', fine: '细', level: '层'
+    }
+  };
+  function label(key) { return labels[state.language][key]; }
 
   function clamp(value, low, high) {
     return Math.max(low, Math.min(high, value));
@@ -106,7 +121,7 @@
   }
 
   function text(context, label, x, y, size, color, alignment) {
-    context.font = `${size || 11}px "DM Sans", "Inter", system-ui, sans-serif`;
+    context.font = `${size || 11}px Arial, "Microsoft YaHei", system-ui, sans-serif`;
     context.textAlign = alignment || 'left';
     context.textBaseline = 'middle';
     context.fillStyle = color || palette.ink;
@@ -120,39 +135,15 @@
     context.save();
 
     const compact = width < 420;
-    const unit = clamp(width / 680, 0.68, 1.5);
+    const unit = clamp(width / 680, 0.8, 1.5);
     const selectedBranch = state.branchMix < 0.5 ? -1 : 1;
-    const selectedColor = selectedBranch === -1 ? palette.green : palette.copper;
+    const selectedColor = selectedBranch === -1 ? palette.monocyte : palette.neutrophil;
 
-    // Perspective floor makes depth legible without competing with the cell cloud.
-    context.globalAlpha = 0.65;
-    for (let step = 0; step <= 9; step += 1) {
-      const x = width * (0.09 + step * 0.087);
-      line(context, x, height * 0.85, x + width * 0.055, height * 0.68, palette.grid, 0.6);
-    }
-    for (let step = 0; step <= 4; step += 1) {
-      const y = height * (0.68 + step * 0.0425);
-      const shift = width * (0.055 - step * 0.01375);
-      line(context, width * 0.09 + shift, y, width * 0.873 + shift, y, palette.grid, 0.6);
-    }
-    context.globalAlpha = 1;
+    // The path and cells carry the explanation; no perspective floor is needed.
+    text(context, `${label('requested')}: ${label(state.branch)}`, width * 0.075,
+      height * 0.065, compact ? 11 : 12, selectedColor);
 
-    // Projected cloud shadows anchor the diagram to the floor.
-    {
-      const shadow = context.createRadialGradient(width * 0.62, height * 0.79, 0,
-        width * 0.62, height * 0.79, width * 0.34);
-      shadow.addColorStop(0, 'rgba(60,90,77,0.045)');
-      shadow.addColorStop(1, 'rgba(60,90,77,0)');
-      context.save();
-      context.translate(width * 0.62, height * 0.79);
-      context.scale(1, 0.13);
-      context.translate(-width * 0.62, -height * 0.79);
-      context.fillStyle = shadow;
-      context.fillRect(0, 0, width, height * 6);
-      context.restore();
-    }
-
-    // Fine center lines show how a shared trunk becomes two possible routes.
+    // Both routes remain legible, while line weight identifies the requested path.
     for (const branch of [-1, 1]) {
       const active = branch === selectedBranch;
       context.beginPath();
@@ -161,11 +152,13 @@
         if (i === 0) context.moveTo(point.x, point.y);
         else context.lineTo(point.x, point.y);
       }
-      context.lineWidth = active ? 1.25 : 0.7;
+      context.lineWidth = active ? 2.2 : 1.15;
       context.strokeStyle = active ? selectedColor : palette.neutral;
-      context.globalAlpha = active ? 0.22 : 0.22;
+      context.globalAlpha = active ? 0.78 : 0.62;
+      context.setLineDash(active ? [] : [4, 4]);
       context.stroke();
     }
+    context.setLineDash([]);
 
     for (const cell of cells) {
       const point = project(cell.t, cell.branch, cell.side,
@@ -173,9 +166,10 @@
       const isCommon = cell.t < 0.34;
       const activeWeight = cell.branch === -1 ? 1 - state.branchMix : state.branchMix;
       const behindCursor = 1 - smooth((cell.t - state.time) / 0.09);
-      const alpha = cell.opacity * (isCommon ? 0.68 : 0.18 + activeWeight * 0.67);
-      context.globalAlpha = alpha * (0.48 + behindCursor * 0.52);
-      context.fillStyle = isCommon ? palette.ink : cell.branch === -1 ? palette.green : palette.copper;
+      const alpha = cell.opacity * (isCommon ? 0.8 : 0.36 + activeWeight * 0.58);
+      context.globalAlpha = alpha * (0.72 + behindCursor * 0.28);
+      context.fillStyle = isCommon ? palette.ink : cell.branch === selectedBranch
+        ? (cell.branch === -1 ? palette.monocyte : palette.neutrophil) : palette.neutral;
       context.beginPath();
       context.arc(point.x, point.y, cell.radius * unit * (1 + point.z * 3), 0, Math.PI * 2);
       context.fill();
@@ -190,7 +184,7 @@
       const point = project(t, branch, 0, particle.spreadY, particle.spreadZ, 0, width, height);
       const tailPoint = project(Math.max(0, t - 0.014), branch, 0,
         particle.spreadY, particle.spreadZ, 0, width, height);
-      context.globalAlpha = (1 - particle.offset) * 0.7;
+      context.globalAlpha = (1 - particle.offset) * 0.9;
       line(context, tailPoint.x, tailPoint.y, point.x, point.y, selectedColor, particle.radius * unit * 0.85);
       context.beginPath();
       context.arc(point.x, point.y, particle.radius * unit, 0, Math.PI * 2);
@@ -201,46 +195,43 @@
 
     const source = project(0.015, 0, 0, 0, 0, 0, width, height);
     context.beginPath();
-    context.arc(source.x, source.y, 5.5 * unit, 0, Math.PI * 2);
+    context.arc(source.x, source.y, 6.2 * unit, 0, Math.PI * 2);
     context.fillStyle = '#ffffff';
     context.fill();
-    context.lineWidth = 1.5;
+    context.lineWidth = 1.8;
     context.strokeStyle = palette.ink;
     context.stroke();
     context.beginPath();
     context.arc(source.x, source.y, 2 * unit, 0, Math.PI * 2);
     context.fillStyle = palette.ink;
     context.fill();
-    text(context, 'Shared source', source.x - 10 * unit, source.y + 28 * unit,
-      compact ? 10 : 11, palette.ink);
+    text(context, label('source'), source.x - 10 * unit, source.y + 26 * unit,
+      compact ? 11 : 12, palette.ink);
 
     const cursor = project(travel, -1 + 2 * state.branchMix, 0, 0, 0, 0, width, height);
-    const glow = context.createRadialGradient(cursor.x, cursor.y, 2, cursor.x, cursor.y, 25 * unit);
-    glow.addColorStop(0, selectedBranch === -1 ? 'rgba(36,118,91,0.18)' : 'rgba(191,129,75,0.18)');
-    glow.addColorStop(1, 'rgba(255,255,255,0)');
-    context.fillStyle = glow;
-    context.fillRect(cursor.x - 25 * unit, cursor.y - 25 * unit, 50 * unit, 50 * unit);
     context.beginPath();
     context.arc(cursor.x, cursor.y, 7 * unit, 0, Math.PI * 2);
+    context.fillStyle = '#ffffff';
+    context.fill();
     context.strokeStyle = selectedColor;
-    context.lineWidth = 1.1;
+    context.lineWidth = 1.8;
     context.stroke();
     context.beginPath();
     context.arc(cursor.x, cursor.y, 2.4 * unit, 0, Math.PI * 2);
     context.fillStyle = selectedColor;
     context.fill();
 
-    text(context, 'Monocyte', width * 0.88, height * 0.15, compact ? 10 : 12,
-      palette.green, 'right');
-    text(context, 'Neutrophil', width * 0.93, height * 0.86, compact ? 10 : 12,
-      palette.copper, 'right');
+    text(context, label('monocyte'), width * 0.94, height * 0.155, compact ? 11 : 12,
+      palette.monocyte, 'right');
+    text(context, label('neutrophil'), width * 0.94, height * 0.83, compact ? 11 : 12,
+      palette.neutrophil, 'right');
 
-    const axisY = height * 0.947;
-    line(context, width * 0.12, axisY, width * 0.85, axisY, '#c2d7cc', 0.7);
-    line(context, width * 0.85, axisY, width * 0.84, axisY - 3, '#c2d7cc', 0.7);
-    line(context, width * 0.85, axisY, width * 0.84, axisY + 3, '#c2d7cc', 0.7);
-    text(context, 'Developmental progression', width * 0.485, axisY + 16,
-      compact ? 9 : 10, '#6c877a', 'center');
+    const axisY = height * 0.9;
+    line(context, width * 0.12, axisY, width * 0.85, axisY, palette.neutral, 0.8);
+    line(context, width * 0.85, axisY, width * 0.84, axisY - 3, palette.neutral, 0.8);
+    line(context, width * 0.85, axisY, width * 0.84, axisY + 3, palette.neutral, 0.8);
+    text(context, label('progression'), width * 0.485, height * 0.965,
+      compact ? 10 : 11, '#5d6872', 'center');
     context.restore();
   }
 
@@ -259,7 +250,7 @@
     context.clearRect(0, 0, width, height);
     const depth = state.drawnDepth;
     const selectedLeaf = state.branch === 'monocyte' ? 12 : 51;
-    const selectedColor = state.branch === 'monocyte' ? palette.green : palette.copper;
+    const selectedColor = state.branch === 'monocyte' ? palette.monocyte : palette.neutrophil;
     const levels = Math.ceil(depth);
     const small = width < 440;
     context.save();
@@ -268,9 +259,9 @@
       const visibility = clamp(depth - level + 1, 0, 1);
       const node = treePoint(level, 0, depth, width, height);
       context.globalAlpha = visibility;
-      line(context, node.x, height * 0.11, node.x, height * 0.9, '#e8f0eb', 0.5);
-      text(context, small ? `L${level}` : `Level ${level}`, node.x, height * 0.06,
-        small ? 9 : 10, '#6c877a', 'center');
+      line(context, node.x, height * 0.11, node.x, height * 0.9, '#e7ebef', 0.5);
+      text(context, small ? `L${level}` : state.language === 'zh' ? `第 ${level} 层` : `Level ${level}`, node.x, height * 0.06,
+        small ? 9 : 10, '#697581', 'center');
     }
 
     for (let level = 1; level <= levels; level += 1) {
@@ -282,7 +273,7 @@
         const node = treePoint(level, index, depth, width, height);
         const active = index === selectedIndex;
         const firstHalf = index < count / 2;
-        const color = firstHalf ? palette.green : palette.copper;
+        const color = firstHalf ? palette.monocyte : palette.neutrophil;
         context.beginPath();
         context.moveTo(parent.x, parent.y);
         const bend = (node.x - parent.x) * 0.51;
@@ -307,7 +298,7 @@
         context.arc(point.x, point.y, active ? radius + 0.6 : radius, 0, Math.PI * 2);
         context.fillStyle = level === 0 ? palette.ink : active ? selectedColor : '#ffffff';
         context.fill();
-        context.strokeStyle = level === 0 ? palette.ink : index < count / 2 ? '#9bc9b6' : '#d8b28c';
+        context.strokeStyle = level === 0 ? palette.ink : index < count / 2 ? palette.monocyteLight : palette.neutrophilLight;
         context.lineWidth = 0.85;
         context.stroke();
         if (active && level === Math.round(state.depth)) {
@@ -320,12 +311,12 @@
       }
     }
     context.globalAlpha = 1;
-    text(context, 'Root', width * 0.075, height * 0.565, 10, palette.ink, 'center');
-    text(context, 'Coarse', width * 0.075, height * 0.96, 10, '#6c877a', 'center');
-    text(context, 'Fine', width * 0.895, height * 0.96, 10, '#6c877a', 'center');
-    line(context, width * 0.15, height * 0.96, width * 0.82, height * 0.96, '#d6e5dc', 0.65);
-    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 - 3, '#d6e5dc', 0.65);
-    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 + 3, '#d6e5dc', 0.65);
+    text(context, label('root'), width * 0.075, height * 0.565, 10, palette.ink, 'center');
+    text(context, label('coarse'), width * 0.075, height * 0.96, 10, '#697581', 'center');
+    text(context, label('fine'), width * 0.895, height * 0.96, 10, '#697581', 'center');
+    line(context, width * 0.15, height * 0.96, width * 0.82, height * 0.96, '#d8dfe5', 0.65);
+    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 - 3, '#d8dfe5', 0.65);
+    line(context, width * 0.82, height * 0.96, width * 0.81, height * 0.96 + 3, '#d8dfe5', 0.65);
     context.restore();
   }
 
@@ -436,6 +427,10 @@
   window.ScLineageVisuals = {
     initHero: function (canvas) { initialize(canvas, 'hero'); },
     initTree: function (canvas) { initialize(canvas, 'tree'); },
+    setLanguage: function (language) {
+      state.language = language === 'zh' ? 'zh' : 'en';
+      wake();
+    },
     setDepth: function (depth) {
       if (!Number.isFinite(Number(depth))) return;
       state.depth = clamp(Math.round(Number(depth)), 1, 6);

@@ -6,6 +6,7 @@
   let data;
   let language = 'en';
   let depth = 3;
+  let mapDepth = 3;
   let condition = 'full';
   let task = 'D6';
   let metric = 'recall';
@@ -23,8 +24,11 @@
     document.body.classList.toggle('lang-zh', next === 'zh');
     all('[data-i18n]').forEach(node => { node.innerHTML = (next === 'zh' ? (node.dataset.zh || chinese[node.dataset.i18n]) : english[node.dataset.i18n]) || english[node.dataset.i18n]; });
     all('[data-lang]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.lang === next)));
-    if (data) { updateDepth(depth); updateAblation(condition); updateBenchmark(); }
+    translateControls();
+    if (data) { updateDepth(depth); updateMapDepth(mapDepth); updateAblation(condition); updateBenchmark(); }
     window.ResultsExplorer?.setLanguage(next);
+    window.ScLineageVisuals?.setLanguage?.(next);
+    window.dispatchEvent(new CustomEvent('sclineage:language', {detail:{language:next}}));
     updatePlayButton();
   }
 
@@ -35,27 +39,27 @@
     $('code-number').textContent = 2 ** depth;
     all('[data-depth]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.depth) === depth)));
     window.ScLineageVisuals.setDepth(depth);
-    const map = data.depth.displayedMaps.find(row => row.depth === depth);
+  }
+
+  function updateMapDepth(value) {
+    const map = data.depth.displayedMaps.find(row => row.depth === Number(value));
+    if (!map) return;
+    mapDepth = map.depth;
+    all('[data-map-depth]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.mapDepth) === mapDepth)));
     const image = $('depth-image');
     if (map) {
       image.src = map.heldoutImage;
-      image.alt = `CT34 level ${depth}, 20,000 held-out cells, seed 44`;
+      image.alt = language === 'zh' ? `CT34 第 ${mapDepth} 层，20,000 个留出细胞，seed 44` : `CT34 level ${mapDepth}, 20,000 held-out cells, seed 44`;
       $('depth-stat-label').textContent = language === 'zh' ? '留出细胞 NMI · 示例拟合' : 'Held-out NMI · displayed fit';
       $('depth-stat').textContent = map.heldoutNmi.toFixed(3);
       $('depth-stat-note').textContent = language === 'zh' ? '20,000 个留出细胞，seed 44。图 2b。' : '20,000 held-out cells · seed 44 · Fig. 2b.';
-    } else {
-      image.src = 'assets/figures/ct34-depth-nmi.webp';
-      image.alt = 'Held-out NMI over all six codebook levels, five technical fits';
-      $('depth-stat-label').textContent = language === 'zh' ? '第 ' + depth + ' 层 · 五次拟合' : `Level ${depth} · five technical fits`;
-      $('depth-stat').textContent = depth === 4 ? data.depth.peak.medianNmi.toFixed(3) : '—';
-      $('depth-stat-note').textContent = depth === 4
-        ? (language === 'zh' ? 'NMI 中位数 0.816，均值 0.819。图 2b。' : 'NMI median 0.816 · mean 0.819. Fig. 2b.')
-        : (language === 'zh' ? '论文以图报告此层指标，精确数值待原始表格补充。' : 'This level is reported graphically. Exact values await the source table.');
     }
+    if ($('map-depth-note')) $('map-depth-note').textContent = language === 'zh' ? '实测投影提供 L1、L3、L6，与结构示意独立切换。' : 'Measured projections are available at L1, L3 and L6, independently of the schematic depth control.';
   }
 
   function renderBars(target, rows, maximum, format) {
-    const container = $(target);
+    const container = typeof target === 'string' ? $(target) : target;
+    if (!container) return;
     container.replaceChildren();
     rows.forEach(row => {
       const element = document.createElement('div');
@@ -66,6 +70,7 @@
       track.className = 'bar-track';
       const bar = document.createElement('div');
       bar.className = 'bar-fill';
+      if (row.color) bar.style.background = row.color;
       track.append(bar);
       if (row.sd !== undefined) {
         const error = document.createElement('span');
@@ -83,6 +88,9 @@
       container.append(element);
       requestAnimationFrame(() => { bar.style.width = `${row.value / maximum * 100}%`; });
     });
+    const axis = document.createElement('div');axis.className = 'metric-axis';
+    [0, maximum / 2, maximum].forEach(value => {const tick=document.createElement('span');tick.textContent=format(value);axis.append(tick);});
+    container.append(axis);
   }
 
   function updateAblation(next) {
@@ -92,19 +100,33 @@
     all('[data-ablation]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.ablation === next)));
     $('ablation-precision').innerHTML = `${(selected.precision * 100).toFixed(2)}<small>%</small>`;
     $('ablation-recall').innerHTML = `${(selected.recall * 100).toFixed(2)}<small>%</small>`;
-    renderBars('ablation-chart', data.routeAblation.rows.map((row, index) => ({label: language === 'zh' ? chinese[keys[index]] : row.condition, value:row.recall, className:keys[index] === next ? 'selected' : ''})), 1, value => `${(value * 100).toFixed(2)}%`);
-    $('ablation-chart').setAttribute('aria-label', language === 'zh' ? '三种路径输入的 kNN 召回率' : 'kNN recall for each route input');
+    if ($('ablation-mmd')) $('ablation-mmd').textContent = selected.mmd.toFixed(4);
+    const chart = $('ablation-chart');chart.replaceChildren();
+    const labels={precision:['kNN precision ↑','kNN 精确率 ↑'],recall:['kNN recall ↑','kNN 召回率 ↑'],mmd:['RBF-MMD ↓','RBF-MMD ↓']};
+    const colors=['var(--data-no-route, #C7CCD6)','var(--data-leaf-only, #AACAC4)','var(--data-full-path, #D89A7C)'];
+    for(const key of ['precision','recall','mmd']) {
+      const block=document.createElement('section');block.className='ablation-metric-block';
+      const title=document.createElement('h4');title.textContent=labels[key][language==='zh'?1:0];
+      const rows=document.createElement('div');block.append(title,rows);chart.append(block);
+      const max=key==='mmd'?Math.max(...data.routeAblation.rows.map(row=>row[key]+(row[key+'Sd']||0)))*1.12:1;
+      renderBars(rows,data.routeAblation.rows.map((row,index)=>({label:language==='zh'?chinese[keys[index]]:row.condition,value:row[key],sd:row[key+'Sd'],className:`${keys[index]} ${keys[index]===next?'selected':''}`,color:colors[index]})),max,value=>key==='mmd'?value.toFixed(3):`${(value*100).toFixed(1)}%`);
+    }
+    chart.setAttribute('aria-label', language === 'zh' ? '三种路径输入的精确率、召回率与 MMD' : 'Precision, recall and MMD for the three route inputs');
+    if ($('ablation-uncertainty')) $('ablation-uncertainty').textContent = language === 'zh'
+      ? '均值 ± 样本标准差。完整路径的精确率/召回率：3 次重复，每次平均 5 次重采样（各取 500 个生成细胞与观测细胞）；标准差跨 3 次重复计算。其余消融统计来自 3 个模型种子，每次拟合生成 4,000 个细胞。'
+      : 'Mean ± sample s.d. Full-path precision/recall: 3 repetitions, each averaging 5 resamples of 500 generated and 500 observed cells; s.d. is across the 3 repetitions. Other ablation estimates use 3 model seeds, with 4,000 generated cells per fit.';
   }
 
   function updateBenchmark() {
     const record = data.populationBenchmarks.tasks.find(row => row.day === task);
     const definition = data.populationBenchmarks.metrics.find(row => row.key === metric);
     const own = record.rows.find(row => row.method === 'sclineage')[metric];
-    const format = value => metric === 'recall' ? `${(value * 100).toFixed(2)}%` : value.toFixed(metric === 'pearson' ? 5 : 4);
+    const format = value => metric === 'recall' ? `${(value * 100).toFixed(2)}%` : value.toFixed(metric === 'pearson' ? 3 : 4);
     const max = metric === 'recall' || metric === 'pearson' ? 1.03 : Math.max(...record.rows.map(row => row[metric].mean + row[metric].sd)) * 1.12;
     all('[data-task]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.task === task)));
     $('task-description').textContent = language === 'zh' ? `训练 ${record.trainingDays.join(' + ')} → 预测 ${task} · ${record.targetCells.toLocaleString()} 个目标细胞` : `Train ${record.trainingDays.join(' + ')} → predict ${task} · ${record.targetCells.toLocaleString()} target cells`;
-    renderBars('benchmark-chart', record.rows.map(row => ({label:row.method, value:row[metric].mean, sd:row[metric].sd, className:row.method})), max, format);
+    const colors={sclineage:'var(--data-sclineage, #D89A7C)',TIGON:'var(--data-tigon, #8CAAC1)',scDiffEq:'var(--data-scdiffeq, #C7CCD6)'};
+    renderBars('benchmark-chart', record.rows.map(row => ({label:row.method, value:row[metric].mean, sd:row[metric].sd, className:row.method,color:colors[row.method]})), max, format);
     $('benchmark-main').innerHTML = metric === 'recall' ? `${(own.mean * 100).toFixed(2)}<small>%</small>` : own.mean.toFixed(4);
     const labels = {recall:['Coverage of observed cell states','对真实细胞状态的覆盖'],pearson:['Population-mean expression correlation','群体平均表达相关性'],swd:['Sliced Wasserstein · lower is better','切片 Wasserstein 距离 · 越低越好'],mmd:['RBF-MMD · lower is better','RBF-MMD · 越低越好']};
     $('metric-direction').textContent = labels[metric][language === 'zh' ? 1 : 0];
@@ -112,9 +134,27 @@
     $('benchmark-explanation').textContent = language === 'zh' ? `sclineage 在 ${task} 的报告均值。此任务和指标下，${best.method} 的均值最佳。误差线为样本标准差。` : `Reported sclineage mean on ${task}. ${best.method} has the best mean for this task and metric. Whiskers show sample standard deviation.`;
   }
 
+  function translateControls() {
+    const zh=language==='zh';
+    const groupNames={'Sections':'章节导航','Language':'语言','Cell map coloring':'细胞图着色','Cell-map method':'细胞图方法','Measured cell-map depth':'实测细胞图层数','Fate evaluation':'命运评估','Fate window':'命运评估时间段','Graph reconstruction':'拓扑重建','Prediction task':'预测任务','Region I reference routes':'区域 I 参考路径','Requested branch':'指定分支','Route ablation comparison':'路径消融比较','Route input':'路径输入','Selected reference region':'选择参考区域','Source clone pairing':'来源克隆对应','Training coupling':'训练配对','Path input':'路径输入','Requested fate':'指定命运','Matched baseline prediction task':'匹配基线预测任务','Matched baseline metric':'匹配基线指标'};
+    all('[aria-label]').forEach(node=>{node.dataset.originalLabel ||= node.getAttribute('aria-label');if(groupNames[node.dataset.originalLabel])node.setAttribute('aria-label',zh?groupNames[node.dataset.originalLabel]:node.dataset.originalLabel);});
+    const aria={'time-slider':['Animation progress','动画进度'],'depth-slider':['Schematic tree depth','示意树深度'],'hero-canvas':['Conceptual path-conditioned flow','路径条件流概念示意'],'tree-canvas':['Schematic hierarchical codebook','层级码本结构示意'],'metric-select':['Evaluation metric','评估指标'],'close-figure':['Close figure','关闭图片'],'figure-viewport':['Figure viewer; scroll to inspect original size','原图查看器；可滚动查看原尺寸']};
+    for(const [id,labels] of Object.entries(aria)) $(id)?.setAttribute('aria-label',labels[zh?1:0]);
+    const progressLabel=document.querySelector('label[for="time-slider"]');if(progressLabel) progressLabel.textContent=zh?'动画进度':'Animation progress';
+    all('[data-figure]').forEach(button=>{button.dataset.originalAria ||= button.getAttribute('aria-label')||'View source figure';button.setAttribute('aria-label',zh?'查看原论文图':button.dataset.originalAria);});
+    all('[data-branch]').forEach(button=>{const icon=button.querySelector('i');const name=button.dataset.branch==='monocyte'?(zh?'单核细胞':'Monocyte'):(zh?'中性粒细胞':'Neutrophil');button.replaceChildren(...(icon?[icon]:[]),document.createTextNode(name));});
+    const textMap={INTERPOLATION:'插值',FORWARD:'前向预测',BACKWARD:'后向预测',REPRESENTATION:'表征',HIERARCHY:'层级结构',GENERATION:'生成','CLONE-FATE TV ↓':'克隆命运 TV ↓','D6 · NEUTROPHIL PROPORTION':'D6 · 中性粒细胞比例'};
+    all('.time-folds small,.method-steps .small-label,.clone-readout .small-label').forEach(node=>{node.dataset.originalText ||= node.textContent;node.textContent=zh?(textMap[node.dataset.originalText]||node.dataset.originalText):node.dataset.originalText;});
+    const metrics={recall:['kNN recall ↑','kNN 召回率 ↑'],pearson:['Pearson R ↑','Pearson R ↑'],swd:['Sliced Wasserstein ↓','切片 Wasserstein ↓'],mmd:['RBF-MMD ↓','RBF-MMD ↓']};
+    all('#metric-select option').forEach(node=>{if(metrics[node.value])node.textContent=metrics[node.value][zh?1:0];});
+    const labels={'figure-original':['Open original image ↗','打开原图 ↗'],'figure-download':['Download image ↓','下载原图 ↓'],'figure-fit':['Fit to screen','适应屏幕'],'figure-native':['Original size','原始尺寸'],'chapter-menu':['Sections','章节']};
+    for(const [id,text] of Object.entries(labels)) if($(id)) $(id).textContent=text[zh?1:0];
+    $('chapter-menu')?.setAttribute('aria-label',zh?'展开或收起章节导航':'Show or hide chapter navigation');
+  }
+
   function updatePlayButton() {
     $('hero-play').textContent = playing ? 'Ⅱ' : '▷';
-    $('hero-play').setAttribute('aria-label', playing ? 'Pause animation' : 'Play animation');
+    $('hero-play').setAttribute('aria-label', language === 'zh' ? (playing ? '暂停动画' : '播放动画') : (playing ? 'Pause animation' : 'Play animation'));
     window.ScLineageVisuals.setPlaying(playing);
   }
 
@@ -131,6 +171,7 @@
   });
   $('depth-slider').addEventListener('input', event => {stopDepth();if(data)updateDepth(event.target.value);});
   all('[data-depth]').forEach(button => button.addEventListener('click', () => {stopDepth();if(data)updateDepth(button.dataset.depth);}));
+  all('[data-map-depth]').forEach(button => button.addEventListener('click', () => {if(data)updateMapDepth(button.dataset.mapDepth);}));
   function stopDepth() {clearInterval(depthTimer);depthTimer = null;$('depth-play').textContent = language === 'zh' ? '▷ 播放层级' : '▷ Play levels';}
   $('depth-play').addEventListener('click', () => {
     if(depthTimer){stopDepth();return;}
@@ -146,11 +187,38 @@
     $('large-figure').src = displayed ? displayed.currentSrc || displayed.src : button.dataset.figure;
     $('large-figure').alt = displayed ? displayed.alt : button.dataset.caption;
     $('large-caption').textContent = displayed ? displayed.alt : button.dataset.caption;
+    const source=$('large-figure').src;
+    if($('figure-original')) $('figure-original').href=source;
+    if($('figure-download')) {$('figure-download').href=source;$('figure-download').download=source.split('/').pop().split('?')[0];}
+    setFigureMode(false);
     $('figure-dialog').showModal();
     $('figure-dialog').scrollTop = 0;
   }));
   $('close-figure').addEventListener('click', () => $('figure-dialog').close());
   $('figure-dialog').addEventListener('click', event => {if(event.target === $('figure-dialog'))$('figure-dialog').close();});
+  let nativeFigure=false;
+  function setFigureMode(native) {
+    nativeFigure=native;
+    const image=$('large-figure'),viewport=$('figure-viewport');
+    viewport?.classList.toggle('is-native',native);
+    image.style.width=native&&image.naturalWidth?`${image.naturalWidth}px`:'100%';
+    image.style.maxWidth=native?'none':'100%';image.style.maxHeight='none';image.style.height='auto';
+    $('figure-fit')?.setAttribute('aria-pressed',String(!native));$('figure-native')?.setAttribute('aria-pressed',String(native));
+    if(viewport) {viewport.scrollLeft=0;viewport.scrollTop=0;}
+  }
+  $('large-figure').addEventListener('load',()=>{if(nativeFigure)setFigureMode(true);});
+  $('figure-fit')?.addEventListener('click',()=>setFigureMode(false));
+  $('figure-native')?.addEventListener('click',()=>setFigureMode(true));
+  const viewport=$('figure-viewport');let drag;
+  viewport?.addEventListener('pointerdown',event=>{if(!nativeFigure||event.pointerType==='touch'||event.button!==0)return;drag={x:event.clientX,y:event.clientY,left:viewport.scrollLeft,top:viewport.scrollTop};viewport.setPointerCapture(event.pointerId);viewport.classList.add('is-dragging');event.preventDefault();});
+  viewport?.addEventListener('pointermove',event=>{if(!drag)return;viewport.scrollLeft=drag.left+drag.x-event.clientX;viewport.scrollTop=drag.top+drag.y-event.clientY;});
+  const endDrag=()=>{drag=null;viewport?.classList.remove('is-dragging');};viewport?.addEventListener('pointerup',endDrag);viewport?.addEventListener('pointercancel',endDrag);
+  const menu=$('chapter-menu'),sidebar=document.querySelector('.sidebar');
+  function closeMenu(){menu?.setAttribute('aria-expanded','false');sidebar?.classList.remove('menu-open');}
+  menu?.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));sidebar?.classList.toggle('menu-open',open);});
+  all('.sidebar a[href^="#"]').forEach(link=>link.addEventListener('click',closeMenu));
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMenu();});
+  const compact=()=>document.body.classList.toggle('is-scrolled',scrollY>40);window.addEventListener('scroll',compact,{passive:true});compact();
   $('copy-citation').addEventListener('click', async () => {
     const citation = 'Yan, X., Ling, B. W.-K., Yang, F., Li, S. Z. & Zang, Z. sclineage integrates hierarchical lineage inference with conditional cell-state generation. Research manuscript.';
     try {await navigator.clipboard.writeText(citation);$('copy-status').textContent = language === 'zh' ? '稿件引用已复制。' : 'Manuscript citation copied.';}
@@ -164,5 +232,6 @@
   window.ScLineageVisuals.initHero($('hero-canvas'));
   window.ScLineageVisuals.initTree($('tree-canvas'));
   updatePlayButton();
-  fetch('assets/research-data.json').then(response => {if(!response.ok)throw Error('Data unavailable');return response.json();}).then(result => {data=result;updateDepth(depth);updateAblation(condition);updateBenchmark();}).catch(() => {$('depth-stat-note').textContent='Interactive data could not be loaded. Please reload the page.';$('benchmark-explanation').textContent='Please reload to load the reported metrics.';});
+  translateControls();
+  fetch('assets/research-data.json?v='+(document.documentElement.dataset.dataVersion||'current')).then(response => {if(!response.ok)throw Error('Data unavailable');return response.json();}).then(result => {data=result;window.ScLineageData=result;updateDepth(depth);updateMapDepth(mapDepth);updateAblation(condition);updateBenchmark();window.dispatchEvent(new CustomEvent('sclineage:data',{detail:{data:result,language}}));}).catch(() => {$('depth-stat-note').textContent=language==='zh'?'交互数据暂时未能载入，请刷新页面。':'Interactive data could not be loaded. Please reload the page.';$('benchmark-explanation').textContent=language==='zh'?'请刷新以载入报告指标。':'Please reload to load the reported metrics.';});
 })();

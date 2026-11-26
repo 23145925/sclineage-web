@@ -1,11 +1,14 @@
 {
   "provenance": {
     "manuscriptTitle": "sclineage integrates hierarchical lineage inference with conditional cell-state generation",
-    "version": "Overleaf compiled manuscript downloaded 2026-11-25",
+    "version": "NM_scLineage (27).pdf; Overleaf-compiled manuscript downloaded 2026-11-25; website data and figure assets reviewed 2026-11-26.",
     "pageCount": 46,
     "publicationStatus": "Research manuscript",
-    "values": "Transcribed from numeric labels, tables and prose in the manuscript. Unlabeled plotted coordinates are not digitized.",
-    "animations": "Conceptual animations are illustrative and must be labelled. Reported metrics and figure panels are measured results."
+    "values": "Numeric labels and prose from the current manuscript, plus exact source CSV records verified against the current figure content. Matched OT-CFM source-figure content is byte-identical to current S14. Obsolete full-path ablation precision/recall values were excluded. No unlabeled plotted coordinates were digitized.",
+    "animations": "Conceptual animations are illustrative and must be labelled. Reported metrics and figure panels are measured results.",
+    "sourceFilename": "NM_scLineage (27).pdf",
+    "downloadDate": "2026-11-25",
+    "websiteReviewDate": "2026-11-26"
   },
   "depth": {
     "dataset": "CT34",
@@ -84,13 +87,23 @@
         "condition": "No route",
         "precision": 0.4799,
         "recall": 0.4496,
-        "mmd": 0.2111
+        "mmd": 0.2111,
+        "swd": 0.5566,
+        "swdSd": 0.1307,
+        "mmdSd": 0.0701,
+        "precisionSd": 0.114,
+        "recallSd": 0.2422
       },
       {
         "condition": "Leaf only",
         "precision": 0.4804,
         "recall": 0.6239,
-        "mmd": 0.1607
+        "mmd": 0.1607,
+        "swd": 0.5516,
+        "swdSd": 0.0889,
+        "mmdSd": 0.0375,
+        "precisionSd": 0.0945,
+        "recallSd": 0.1249
       },
       {
         "condition": "Full path",
@@ -98,11 +111,47 @@
         "recall": 0.7261,
         "mmd": 0.1392,
         "precisionSd": 0.0142,
-        "recallSd": 0.0258
+        "recallSd": 0.0258,
+        "swd": 0.5278,
+        "swdSd": 0.0886,
+        "mmdSd": 0.0213
       }
     ],
     "source": "Figure 5c; Supplementary Figure S12; Results page 3; Section S3.5 page 29",
-    "note": "Full-path precision/recall summarize three resampling repetitions. Other ablation summaries use three model seeds. Missing standard deviations were not printed numerically."
+    "note": "Mean ± sample standard deviation. Full-path precision/recall summarize three repetitions, each averaging five resamples of 500 generated and 500 observed cells. All other ablation estimates summarize three model seeds (42–44), with 4,000 generated cells per fit. Five resamples are within a repetition, not five independent model fits.",
+    "replication": {
+      "trainingSeeds": [
+        42,
+        43,
+        44
+      ],
+      "generatedCellsPerFit": 4000,
+      "fullPathPrecisionRecall": {
+        "summaryCount": 3,
+        "summaryUnit": "repetition-level mean",
+        "resamplesPerRepetition": 5,
+        "generatedCellsPerResample": 500,
+        "observedCellsPerResample": 500,
+        "sdAcross": "three repetition-level means"
+      },
+      "otherEstimates": {
+        "summaryCount": 3,
+        "summaryUnit": "model seed",
+        "sdAcross": "three model seeds"
+      },
+      "sources": [
+        "Methods page 19",
+        "Supplementary Fig. S5a,b (page 36)",
+        "Supplementary Fig. S12 (page 43)"
+      ]
+    },
+    "sourceValidation": {
+      "numericSource": "source_data_legacy.csv in NM_scLineage (1).zip, retained only for the unchanged ablation records; current Results page 3 supplies the revised full-path precision/recall.",
+      "validation": "The current S12a SWD/MMD plotting content is unchanged from the archive. No-route and leaf-only means/SDs agree with current S12b; its horizontal axis was expanded for the new full-path point. Archived full-path precision 0.5276 and recall 0.6299 are obsolete and were excluded.",
+      "currentFullPathPrecisionRecallSource": "Results page 3: precision 0.8551 ± 0.0142; recall 0.7261 ± 0.0258.",
+      "precisionRecallUnit": "fraction",
+      "sdType": "sample standard deviation"
+    }
   },
   "populationBenchmarks": {
     "dataset": "LARRY",
@@ -519,15 +568,15 @@
       "src": "assets/figures/ct34-depth-panel.webp",
       "page": 6,
       "caption": "Figure 2b. CT34 assignments at levels 1, 3 and 6, and held-out NMI over all six levels.",
-      "width": 921,
-      "height": 753
+      "width": 1248,
+      "height": 1012
     },
     "ct34-depth-nmi": {
       "src": "assets/figures/ct34-depth-nmi.webp",
       "page": 6,
       "caption": "Figure 2b. Held-out NMI across six levels and five technical fits. The line joins medians.",
-      "width": 864,
-      "height": 276
+      "width": 1184,
+      "height": 380
     },
     "ct34-depth-1-full": {
       "src": "assets/figures/ct34-depth-1-full.webp",
@@ -574,9 +623,9 @@
     "ct34-structure": {
       "src": "assets/figures/ct34-structure.webp",
       "page": 7,
-      "caption": "Figure 3. CT34 lineage structure recovery.",
-      "width": 1277,
-      "height": 1443
+      "caption": "Fig. 3a–c. Complete CT34 route, structure-score and topology panels with all legends, metric labels and directed-edge F1 values.",
+      "width": 1604,
+      "height": 2045
     },
     "larry-generation": {
       "src": "assets/figures/larry-generation.webp",
@@ -588,9 +637,9 @@
     "route-ablation": {
       "src": "assets/figures/route-ablation.webp",
       "page": 9,
-      "caption": "Figure 5c. D6 route-input ablation with hierarchy-aware OT fixed.",
-      "width": 829,
-      "height": 411
+      "caption": "Fig. 5c. Current D6 route-input ablation with hierarchy-aware OT fixed. The full recall axis (0.2–0.8), break mark and all error bars are retained. Cropped from the current manuscript page 9; only unrelated neighbouring-panel fragments in the white gutter were removed. The archived standalone Figure5.pdf is an older version and was not used.",
+      "width": 1205,
+      "height": 565
     },
     "clone-fidelity": {
       "src": "assets/figures/clone-fidelity.webp",
@@ -730,7 +779,8 @@
       "page": 8,
       "caption": "Fig. 4d,e. Original cohort-level native-readout error plots and shared-readout precision–recall curves. Native TV uses 978 D4-to-D6 test clones, and conditional N/(N+M) MAE uses 672 eligible clones. The shared ten-fate readout uses 375 D2-to-D6 and 978 D4-to-D6 test clones. Confidence intervals quantify clone-sampling uncertainty with fitted predictions held fixed.",
       "width": 1828,
-      "height": 1048
+      "height": 1048,
+      "displayType": "Fig. 4d: native-readout error bars; Fig. 4e: precision–recall curves with paired AP-difference confidence intervals. AUROC/AP point estimates are in Supplementary Fig. S10b."
     },
     "generation-benchmarks": {
       "src": "assets/figures/generation-benchmarks.webp",
@@ -752,6 +802,77 @@
       "caption": "Fig. 5d. Original source-clone fate-fidelity comparison for generated D6 states, evaluated against barcode-linked descendants of 530 D2 source cells from 375 test clones. A common probability readout fitted on 172 development clones estimates neutrophil, monocyte and other-fate proportions. Filled symbols and whiskers summarize three technical seeds (42–44); the open diamond shows the shuffled control. Lower mean clone-level total variation indicates greater agreement.",
       "width": 1150,
       "height": 565
+    },
+    "ct34-state-cellrank2": {
+      "src": "assets/figures/ct34-state-cellrank2.webp",
+      "page": 6,
+      "caption": "Fig. 2a. CellRank 2, the same 100,000 CT34 cells coloured by 34 reference states. Original state-colour key from Supplementary Fig. S3b (page 34) is rearranged into four rows for legibility.",
+      "width": 720,
+      "height": 870,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-time-cellrank2": {
+      "src": "assets/figures/ct34-time-cellrank2.webp",
+      "page": 6,
+      "caption": "Fig. 2a. CellRank 2, the same 100,000 CT34 cells coloured by normalized developmental time. The original common 0–1 time colour scale is retained.",
+      "width": 720,
+      "height": 750,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-state-stavia": {
+      "src": "assets/figures/ct34-state-stavia.webp",
+      "page": 6,
+      "caption": "Fig. 2a. StaVia, the same 100,000 CT34 cells coloured by 34 reference states. Original state-colour key from Supplementary Fig. S3b (page 34) is rearranged into four rows for legibility.",
+      "width": 720,
+      "height": 870,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-time-stavia": {
+      "src": "assets/figures/ct34-time-stavia.webp",
+      "page": 6,
+      "caption": "Fig. 2a. StaVia, the same 100,000 CT34 cells coloured by normalized developmental time. The original common 0–1 time colour scale is retained.",
+      "width": 720,
+      "height": 750,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-state-monocle3": {
+      "src": "assets/figures/ct34-state-monocle3.webp",
+      "page": 6,
+      "caption": "Fig. 2a. Monocle3, the same 100,000 CT34 cells coloured by 34 reference states. Original state-colour key from Supplementary Fig. S3b (page 34) is rearranged into four rows for legibility.",
+      "width": 720,
+      "height": 870,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-time-monocle3": {
+      "src": "assets/figures/ct34-time-monocle3.webp",
+      "page": 6,
+      "caption": "Fig. 2a. Monocle3, the same 100,000 CT34 cells coloured by normalized developmental time. The original common 0–1 time colour scale is retained.",
+      "width": 720,
+      "height": 750,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-state-sclineage": {
+      "src": "assets/figures/ct34-state-sclineage.webp",
+      "page": 6,
+      "caption": "Fig. 2a. sclineage, the same 100,000 CT34 cells coloured by 34 reference states. Original state-colour key from Supplementary Fig. S3b (page 34) is rearranged into four rows for legibility.",
+      "width": 720,
+      "height": 870,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-time-sclineage": {
+      "src": "assets/figures/ct34-time-sclineage.webp",
+      "page": 6,
+      "caption": "Fig. 2a. sclineage, the same 100,000 CT34 cells coloured by normalized developmental time. The original common 0–1 time colour scale is retained.",
+      "width": 720,
+      "height": 750,
+      "assembly": "Original embedded scatter raster, original method heading and original legend; white-space layout adjusted for a single-method mobile view. No coordinates or observations were generated."
+    },
+    "ct34-state-key": {
+      "src": "assets/figures/ct34-state-key.webp",
+      "page": 34,
+      "caption": "Supplementary Fig. S3b. Original 34-state colour-key entries reflowed into four rows; labels and colour swatches are unchanged.",
+      "width": 720,
+      "height": 156
     }
   },
   "structureValidation": {
@@ -1039,6 +1160,51 @@
         "intervalType": "percentile",
         "scope": "Intervals quantify clone-sampling uncertainty for the paired AP difference, with fitted predictions held fixed; they are not confidence intervals for each individual AP score."
       }
+    },
+    "commonAUROC": {
+      "source": "Supplementary Fig. S10b (page 41), not main Fig. 4e.",
+      "metric": "Macro AUROC",
+      "direction": "higher is better",
+      "readout": "Shared day-ordered readout on ten mature fates",
+      "windows": [
+        {
+          "window": "D2 to D6",
+          "testClones": 375,
+          "rows": [
+            {
+              "method": "Diffusion",
+              "macroAUROC": 0.783
+            },
+            {
+              "method": "PCA64",
+              "macroAUROC": 0.719
+            },
+            {
+              "method": "sclineage",
+              "macroAUROC": 0.826
+            }
+          ]
+        },
+        {
+          "window": "D4 to D6",
+          "testClones": 978,
+          "rows": [
+            {
+              "method": "Diffusion",
+              "macroAUROC": 0.847
+            },
+            {
+              "method": "PCA64",
+              "macroAUROC": 0.777
+            },
+            {
+              "method": "sclineage",
+              "macroAUROC": 0.868
+            }
+          ]
+        }
+      ],
+      "scope": "Same transductive representation and held-out-clone evaluation as commonAP. Main Fig. 4e shows PR curves; Supplementary Fig. S10b displays both AP and AUROC point estimates."
     }
   },
   "biologicalCompositionExample": {
@@ -1066,5 +1232,243 @@
         "meanPercent": 24.81
       }
     ]
+  },
+  "matchedOTCFM": {
+    "tasks": [
+      {
+        "day": "D4",
+        "rows": [
+          {
+            "method": "OT-CFM",
+            "pearson": {
+              "mean": 0.9888,
+              "sd": 0.0007
+            },
+            "swd": {
+              "mean": 0.3582,
+              "sd": 0.0034
+            },
+            "mmd": {
+              "mean": 0.1211,
+              "sd": 0.0029
+            },
+            "precision": {
+              "mean": 0.8147,
+              "sd": 0.0065
+            },
+            "recall": {
+              "mean": 0.5529,
+              "sd": 0.0254
+            }
+          },
+          {
+            "method": "sclineage",
+            "pearson": {
+              "mean": 0.9912,
+              "sd": 0.0005
+            },
+            "swd": {
+              "mean": 0.3268,
+              "sd": 0.004
+            },
+            "mmd": {
+              "mean": 0.1115,
+              "sd": 0.0025
+            },
+            "precision": {
+              "mean": 0.8306,
+              "sd": 0.009
+            },
+            "recall": {
+              "mean": 0.5885,
+              "sd": 0.014
+            }
+          }
+        ]
+      },
+      {
+        "day": "D6",
+        "rows": [
+          {
+            "method": "OT-CFM",
+            "pearson": {
+              "mean": 0.9861,
+              "sd": 0.0008
+            },
+            "swd": {
+              "mean": 0.5095,
+              "sd": 0.0291
+            },
+            "mmd": {
+              "mean": 0.1875,
+              "sd": 0.0148
+            },
+            "precision": {
+              "mean": 0.4577,
+              "sd": 0.0377
+            },
+            "recall": {
+              "mean": 0.4853,
+              "sd": 0.0533
+            }
+          },
+          {
+            "method": "sclineage",
+            "pearson": {
+              "mean": 0.9894,
+              "sd": 0.0022
+            },
+            "swd": {
+              "mean": 0.4768,
+              "sd": 0.045
+            },
+            "mmd": {
+              "mean": 0.1582,
+              "sd": 0.022
+            },
+            "precision": {
+              "mean": 0.5214,
+              "sd": 0.065
+            },
+            "recall": {
+              "mean": 0.6127,
+              "sd": 0.04
+            }
+          }
+        ]
+      },
+      {
+        "day": "D2",
+        "rows": [
+          {
+            "method": "OT-CFM",
+            "pearson": {
+              "mean": 0.9148,
+              "sd": 0.0072
+            },
+            "swd": {
+              "mean": 0.4744,
+              "sd": 0.0358
+            },
+            "mmd": {
+              "mean": 0.1543,
+              "sd": 0.0074
+            },
+            "precision": {
+              "mean": 0.6337,
+              "sd": 0.0119
+            },
+            "recall": {
+              "mean": 0.6672,
+              "sd": 0.0533
+            }
+          },
+          {
+            "method": "sclineage",
+            "pearson": {
+              "mean": 0.9208,
+              "sd": 0.0058
+            },
+            "swd": {
+              "mean": 0.4386,
+              "sd": 0.0185
+            },
+            "mmd": {
+              "mean": 0.1395,
+              "sd": 0.0061
+            },
+            "precision": {
+              "mean": 0.7047,
+              "sd": 0.024
+            },
+            "recall": {
+              "mean": 0.7124,
+              "sd": 0.041
+            }
+          }
+        ]
+      }
+    ],
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "nSeeds": 3,
+    "units": {
+      "precision": "fraction",
+      "recall": "fraction",
+      "pearson": "correlation",
+      "swd": "distance",
+      "mmd": "distance"
+    },
+    "note": "Matched-population comparison, distinct from the main TIGON/scDiffEq population benchmark. Means and sample standard deviations across three model seeds. Precision and recall are stored as fractions; the paper displays percentages and SDs in percentage points.",
+    "source": "Supplementary Fig. S14 (page 45); source_data_otcfm_matched_population.csv; Methods page 20 and Supplementary Section S3.14 pages 30–31.",
+    "sourceValidation": {
+      "archive": "NM_scLineage (1).zip",
+      "csv": "nm_submission/source_data_otcfm_matched_population.csv",
+      "validation": "The companion supplementary_otcfm_matched_population.pdf page-content stream is byte-for-byte identical to the embedded S14 figure in the current NM_scLineage (27).pdf. Exact CSV values are used; no plotted coordinates were digitized.",
+      "figureContentSha256": "8777f050910604150a35f86e948eac49c50f147591a4704056ab3a1fba7212d0"
+    }
+  },
+  "scientificColors": {
+    "source": "Solid fills and curve strokes in the current manuscript figures; checked against original PDF vector RGB and lossless rendered panels.",
+    "ablation": {
+      "noRoute": "#C7CCD6",
+      "leafOnly": "#AACAC4",
+      "fullPath": "#D89A7C"
+    },
+    "representationMethods": {
+      "CellRank 2": "#8CAAC1",
+      "StaVia": "#AACAC4",
+      "Monocle3": "#C7CCD6",
+      "sclineage": "#D89A7C"
+    },
+    "generationMethods": {
+      "TIGON": "#8CAAC1",
+      "scDiffEq": "#C7CCD6",
+      "sclineage": "#D89A7C"
+    },
+    "fates": {
+      "Neutrophil": "#A85E94",
+      "Monocyte": "#368882",
+      "Basophil": "#A4A151",
+      "Other": "#BDB8CB"
+    },
+    "commonReadoutCurves": {
+      "sclineage": "#AD7358",
+      "Diffusion": "#5A788D",
+      "PCA64": "#75808A"
+    }
+  },
+  "ct34MethodMaps": {
+    "source": "Fig. 2a (page 6); state key Supplementary Fig. S3b (page 34)",
+    "methods": [
+      {
+        "key": "cellrank2",
+        "label": "CellRank 2",
+        "stateImage": "assets/figures/ct34-state-cellrank2.webp",
+        "timeImage": "assets/figures/ct34-time-cellrank2.webp"
+      },
+      {
+        "key": "stavia",
+        "label": "StaVia",
+        "stateImage": "assets/figures/ct34-state-stavia.webp",
+        "timeImage": "assets/figures/ct34-time-stavia.webp"
+      },
+      {
+        "key": "monocle3",
+        "label": "Monocle3",
+        "stateImage": "assets/figures/ct34-state-monocle3.webp",
+        "timeImage": "assets/figures/ct34-time-monocle3.webp"
+      },
+      {
+        "key": "sclineage",
+        "label": "sclineage",
+        "stateImage": "assets/figures/ct34-state-sclineage.webp",
+        "timeImage": "assets/figures/ct34-time-sclineage.webp"
+      }
+    ],
+    "scope": "All methods show the same 100,000 CT34 cells. Images use original figure rasters; single-method panels retain the original method labels and legends."
   }
 }
