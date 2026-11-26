@@ -1,0 +1,624 @@
+{
+  "provenance": {
+    "manuscriptTitle": "sclineage integrates hierarchical lineage inference with conditional cell-state generation",
+    "version": "Overleaf compiled manuscript downloaded 2026-11-25",
+    "pageCount": 46,
+    "publicationStatus": "Research manuscript",
+    "values": "Transcribed from numeric labels, tables and prose in the manuscript. Unlabeled plotted coordinates are not digitized.",
+    "animations": "Conceptual animations are illustrative and must be labelled. Reported metrics and figure panels are measured results."
+  },
+  "depth": {
+    "dataset": "CT34",
+    "levels": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "capacity": [
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "capacityMeaning": "Maximum nodes in the binary codebook at the selected depth.",
+    "trainingCells": 80000,
+    "heldoutCells": 20000,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46
+    ],
+    "displayedMaps": [
+      {
+        "depth": 1,
+        "heldoutNmi": 0.344,
+        "seed": 44,
+        "fullFitSeed": 43,
+        "heldoutImage": "assets/figures/ct34-depth-1-heldout.webp",
+        "fullImage": "assets/figures/ct34-depth-1-full.webp"
+      },
+      {
+        "depth": 3,
+        "heldoutNmi": 0.732,
+        "seed": 44,
+        "fullFitSeed": 43,
+        "heldoutImage": "assets/figures/ct34-depth-3-heldout.webp",
+        "fullImage": "assets/figures/ct34-depth-3-full.webp"
+      },
+      {
+        "depth": 6,
+        "heldoutNmi": 0.742,
+        "seed": 44,
+        "fullFitSeed": 43,
+        "heldoutImage": "assets/figures/ct34-depth-6-heldout.webp",
+        "fullImage": "assets/figures/ct34-depth-6-full.webp"
+      }
+    ],
+    "peak": {
+      "depth": 4,
+      "medianNmi": 0.816,
+      "meanNmi": 0.819,
+      "meanAri": 0.622,
+      "kmeansMeanNmi": 0.779,
+      "kmeansMeanAri": 0.579
+    },
+    "source": "Figure 2b; Supplementary Figure S7a,b; Results page 2",
+    "note": "Displayed map NMI values describe one held-out fit (seed 44). Peak mean and median summarize five fits. Do not connect these distinct summaries into a numeric depth curve. All-six-level numerical values require the source-data table."
+  },
+  "routeAblation": {
+    "task": "D6 forward prediction",
+    "trainingDays": [
+      "D2",
+      "D4"
+    ],
+    "fixed": "Hierarchy-aware OT coupling, cost and path-cost weight; matched network parameter counts.",
+    "rows": [
+      {
+        "condition": "No route",
+        "precision": 0.4799,
+        "recall": 0.4496,
+        "mmd": 0.2111
+      },
+      {
+        "condition": "Leaf only",
+        "precision": 0.4804,
+        "recall": 0.6239,
+        "mmd": 0.1607
+      },
+      {
+        "condition": "Full path",
+        "precision": 0.8551,
+        "recall": 0.7261,
+        "mmd": 0.1392,
+        "precisionSd": 0.0142,
+        "recallSd": 0.0258
+      }
+    ],
+    "source": "Figure 5c; Supplementary Figure S12; Results page 3; Section S3.5 page 29",
+    "note": "Full-path precision/recall summarize three resampling repetitions. Other ablation summaries use three model seeds. Missing standard deviations were not printed numerically."
+  },
+  "populationBenchmarks": {
+    "dataset": "LARRY",
+    "metrics": [
+      {
+        "key": "pearson",
+        "label": "Gene-mean Pearson R",
+        "direction": "higher",
+        "unit": "correlation"
+      },
+      {
+        "key": "swd",
+        "label": "Sliced Wasserstein distance",
+        "direction": "lower",
+        "unit": "distance"
+      },
+      {
+        "key": "mmd",
+        "label": "RBF-MMD",
+        "direction": "lower",
+        "unit": "distance"
+      },
+      {
+        "key": "recall",
+        "label": "kNN recall",
+        "direction": "higher",
+        "unit": "fraction"
+      }
+    ],
+    "tasks": [
+      {
+        "day": "D4",
+        "label": "Interpolation",
+        "trainingDays": [
+          "D2",
+          "D6"
+        ],
+        "targetCells": 14962,
+        "rows": [
+          {
+            "method": "TIGON",
+            "pearson": {
+              "mean": 0.97954,
+              "sd": 0.00137
+            },
+            "swd": {
+              "mean": 0.54562,
+              "sd": 0.01895
+            },
+            "mmd": {
+              "mean": 0.14503,
+              "sd": 0.00598
+            },
+            "recall": {
+              "mean": 0.0532,
+              "sd": 0.0091
+            }
+          },
+          {
+            "method": "scDiffEq",
+            "pearson": {
+              "mean": 0.98632,
+              "sd": 0.00055
+            },
+            "swd": {
+              "mean": 0.48427,
+              "sd": 0.02518
+            },
+            "mmd": {
+              "mean": 0.15837,
+              "sd": 0.01153
+            },
+            "recall": {
+              "mean": 0.4085,
+              "sd": 0.0721
+            }
+          },
+          {
+            "method": "sclineage",
+            "pearson": {
+              "mean": 0.98943,
+              "sd": 6e-05
+            },
+            "swd": {
+              "mean": 0.33527,
+              "sd": 0.00923
+            },
+            "mmd": {
+              "mean": 0.11405,
+              "sd": 0.00201
+            },
+            "recall": {
+              "mean": 0.5057,
+              "sd": 0.0232
+            }
+          }
+        ]
+      },
+      {
+        "day": "D6",
+        "label": "Forward extrapolation",
+        "trainingDays": [
+          "D2",
+          "D4"
+        ],
+        "targetCells": 29569,
+        "rows": [
+          {
+            "method": "TIGON",
+            "pearson": {
+              "mean": 0.96383,
+              "sd": 0.0123
+            },
+            "swd": {
+              "mean": 0.72559,
+              "sd": 0.09813
+            },
+            "mmd": {
+              "mean": 0.21938,
+              "sd": 0.03127
+            },
+            "recall": {
+              "mean": 0.0308,
+              "sd": 0.0115
+            }
+          },
+          {
+            "method": "scDiffEq",
+            "pearson": {
+              "mean": 0.99474,
+              "sd": 0.00036
+            },
+            "swd": {
+              "mean": 0.4334,
+              "sd": 0.01944
+            },
+            "mmd": {
+              "mean": 0.14218,
+              "sd": 0.00657
+            },
+            "recall": {
+              "mean": 0.424,
+              "sd": 0.0401
+            }
+          },
+          {
+            "method": "sclineage",
+            "pearson": {
+              "mean": 0.98687,
+              "sd": 0.00617
+            },
+            "swd": {
+              "mean": 0.5278,
+              "sd": 0.08863
+            },
+            "mmd": {
+              "mean": 0.13915,
+              "sd": 0.02127
+            },
+            "recall": {
+              "mean": 0.7261,
+              "sd": 0.0258
+            }
+          }
+        ]
+      },
+      {
+        "day": "D2",
+        "label": "Backward extrapolation",
+        "trainingDays": [
+          "D4",
+          "D6"
+        ],
+        "targetCells": 4585,
+        "rows": [
+          {
+            "method": "TIGON",
+            "pearson": {
+              "mean": 0.84139,
+              "sd": 0.01707
+            },
+            "swd": {
+              "mean": 0.64209,
+              "sd": 0.02339
+            },
+            "mmd": {
+              "mean": 0.22282,
+              "sd": 0.00993
+            },
+            "recall": {
+              "mean": 0.0037,
+              "sd": 0.0006
+            }
+          },
+          {
+            "method": "scDiffEq",
+            "pearson": {
+              "mean": 0.8561,
+              "sd": 0.00231
+            },
+            "swd": {
+              "mean": 0.61352,
+              "sd": 0.02098
+            },
+            "mmd": {
+              "mean": 0.21493,
+              "sd": 0.00227
+            },
+            "recall": {
+              "mean": 0.274,
+              "sd": 0.0231
+            }
+          },
+          {
+            "method": "sclineage",
+            "pearson": {
+              "mean": 0.90456,
+              "sd": 0.01007
+            },
+            "swd": {
+              "mean": 0.4867,
+              "sd": 0.02706
+            },
+            "mmd": {
+              "mean": 0.15864,
+              "sd": 0.01087
+            },
+            "recall": {
+              "mean": 0.7335,
+              "sd": 0.0208
+            }
+          }
+        ]
+      }
+    ],
+    "source": "Supplementary Figure S11, page 42",
+    "genes": 2002,
+    "generatedCellsPerFit": 4000,
+    "modelSeeds": [
+      42,
+      43,
+      44
+    ],
+    "note": "Pearson R, SWD and RBF-MMD summarize three model seeds. Recall summarizes three repetitions, each averaging five 500-cell resamples. SD is sample standard deviation."
+  },
+  "cloneFidelity": {
+    "generation": {
+      "trainingDays": [
+        "D2",
+        "D4"
+      ],
+      "targetDay": "D6",
+      "clones": 375,
+      "sourceCells": 530,
+      "statesPerSource": 32,
+      "rows": [
+        {
+          "method": "TIGON",
+          "tv": 0.511,
+          "sd": 0.002
+        },
+        {
+          "method": "scDiffEq",
+          "tv": 0.452,
+          "sd": 0.026
+        },
+        {
+          "method": "sclineage",
+          "tv": 0.441,
+          "sd": 0.021
+        }
+      ],
+      "matchedTvPrecise": 0.44094,
+      "shuffledTv": 0.63703,
+      "source": "Figure 5d; Supplementary Figure S13a; Section S3.6",
+      "note": "D6 expression excluded from generator fitting. A common fate readout was fitted on 172 development clones. Technical variability across three model seeds."
+    },
+    "representation": {
+      "window": "D4 to D6",
+      "clones": 978,
+      "rows": [
+        {
+          "method": "CellRank 2",
+          "tv": 0.312
+        },
+        {
+          "method": "StaVia",
+          "tv": 0.291
+        },
+        {
+          "method": "Monocle3",
+          "tv": 0.276
+        },
+        {
+          "method": "sclineage",
+          "tv": 0.242
+        }
+      ],
+      "relativeImprovementPercent": 12.4,
+      "source": "Figure 4d; Supplementary Figure S10a",
+      "note": "RNA from D2, D4 and D6 was used for representation fitting. Barcode-linked outcomes in held-out clone groups were used for evaluation."
+    }
+  },
+  "branchSwitching": {
+    "sourceCells": 530,
+    "statesPerSourceAndRequest": 32,
+    "targetDay": "D6",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "fixed": "Source cells, initial noise and target day are identical across paired neutrophil and monocyte requests.",
+    "rows": [
+      {
+        "coupling": "Expression",
+        "path": "None",
+        "neutrophil": {
+          "requested": 14.76,
+          "opposite": 15.68,
+          "other": 69.57
+        },
+        "monocyte": {
+          "requested": 15.68,
+          "opposite": 14.76,
+          "other": 69.57
+        },
+        "switching": 0,
+        "switchingSd": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      {
+        "coupling": "Expression",
+        "path": "Full",
+        "neutrophil": {
+          "requested": 99.47,
+          "opposite": 0,
+          "other": 0.53
+        },
+        "monocyte": {
+          "requested": 99.94,
+          "opposite": 0,
+          "other": 0.06
+        },
+        "switching": 99.73,
+        "switchingSd": 0.08,
+        "ci95": [
+          99.22,
+          99.99
+        ]
+      },
+      {
+        "coupling": "Hierarchy-aware",
+        "path": "None",
+        "neutrophil": {
+          "requested": 19.66,
+          "opposite": 12.97,
+          "other": 67.37
+        },
+        "monocyte": {
+          "requested": 12.97,
+          "opposite": 19.66,
+          "other": 67.37
+        },
+        "switching": 0,
+        "switchingSd": 0,
+        "ci95": [
+          0,
+          0
+        ]
+      },
+      {
+        "coupling": "Hierarchy-aware",
+        "path": "Full",
+        "neutrophil": {
+          "requested": 98.74,
+          "opposite": 0.2,
+          "other": 1.06
+        },
+        "monocyte": {
+          "requested": 99.55,
+          "opposite": 0,
+          "other": 0.45
+        },
+        "switching": 99.02,
+        "switchingSd": 0.14,
+        "ci95": [
+          98.11,
+          99.7
+        ]
+      }
+    ],
+    "unit": "Fate composition in percent. Switching in percentage points.",
+    "source": "Supplementary Figure S15, page 46",
+    "note": "Fates are assigned by an independent expression classifier. These are model predictions under requested paths. Confidence intervals use 2,000 paired clone-bootstrap resamples."
+  },
+  "pancreas": {
+    "trainingStages": [
+      "E13.5",
+      "E14.5"
+    ],
+    "targetStage": "E15.5",
+    "targetCells": 10886,
+    "sclineageRecallPercent": 78.24,
+    "recallGainOverStrongerBaselinePoints": 55.52,
+    "source": "Results page 4; Supplementary Figure S13b",
+    "note": "Each method was fitted separately on the pancreatic training cohort. This evaluates applicability in an independent system."
+  },
+  "figures": {
+    "ct34-depth-panel": {
+      "src": "assets/figures/ct34-depth-panel.webp",
+      "page": 6,
+      "caption": "Figure 2b. CT34 assignments at levels 1, 3 and 6, and held-out NMI over all six levels.",
+      "width": 921,
+      "height": 753
+    },
+    "ct34-depth-nmi": {
+      "src": "assets/figures/ct34-depth-nmi.webp",
+      "page": 6,
+      "caption": "Figure 2b. Held-out NMI across six levels and five technical fits. The line joins medians.",
+      "width": 864,
+      "height": 276
+    },
+    "ct34-depth-1-full": {
+      "src": "assets/figures/ct34-depth-1-full.webp",
+      "page": 6,
+      "caption": "Figure 2b. Level 1, full-data fit with 100,000 CT34 cells, seed 43.",
+      "width": 655,
+      "height": 548
+    },
+    "ct34-depth-1-heldout": {
+      "src": "assets/figures/ct34-depth-1-heldout.webp",
+      "page": 6,
+      "caption": "Figure 2b. Level 1, 20,000 held-out CT34 cells, seed 44.",
+      "width": 951,
+      "height": 549
+    },
+    "ct34-depth-3-full": {
+      "src": "assets/figures/ct34-depth-3-full.webp",
+      "page": 6,
+      "caption": "Figure 2b. Level 3, full-data fit with 100,000 CT34 cells, seed 43.",
+      "width": 654,
+      "height": 548
+    },
+    "ct34-depth-3-heldout": {
+      "src": "assets/figures/ct34-depth-3-heldout.webp",
+      "page": 6,
+      "caption": "Figure 2b. Level 3, 20,000 held-out CT34 cells, seed 44.",
+      "width": 952,
+      "height": 549
+    },
+    "ct34-depth-6-full": {
+      "src": "assets/figures/ct34-depth-6-full.webp",
+      "page": 6,
+      "caption": "Figure 2b. Level 6, full-data fit with 100,000 CT34 cells, seed 43.",
+      "width": 654,
+      "height": 547
+    },
+    "ct34-depth-6-heldout": {
+      "src": "assets/figures/ct34-depth-6-heldout.webp",
+      "page": 6,
+      "caption": "Figure 2b. Level 6, 20,000 held-out CT34 cells, seed 44.",
+      "width": 952,
+      "height": 549
+    },
+    "ct34-structure": {
+      "src": "assets/figures/ct34-structure.webp",
+      "page": 7,
+      "caption": "Figure 3. CT34 lineage structure recovery.",
+      "width": 1277,
+      "height": 1443
+    },
+    "larry-generation": {
+      "src": "assets/figures/larry-generation.webp",
+      "page": 9,
+      "caption": "Figure 5b. Observed and generated cells at held-out days, shown on a shared reference UMAP.",
+      "width": 1624,
+      "height": 620
+    },
+    "route-ablation": {
+      "src": "assets/figures/route-ablation.webp",
+      "page": 9,
+      "caption": "Figure 5c. D6 route-input ablation with hierarchy-aware OT fixed.",
+      "width": 829,
+      "height": 411
+    },
+    "clone-fidelity": {
+      "src": "assets/figures/clone-fidelity.webp",
+      "page": 44,
+      "caption": "Supplementary Figure S13a. D6 clone-fate total variation for 375 test clones.",
+      "width": 1624,
+      "height": 430
+    },
+    "pancreas-forward": {
+      "src": "assets/figures/pancreas-forward.webp",
+      "page": 44,
+      "caption": "Supplementary Figure S13b. Forward prediction in the independent pancreatic time course.",
+      "width": 1624,
+      "height": 396
+    },
+    "branch-switching": {
+      "src": "assets/figures/branch-switching.webp",
+      "page": 46,
+      "caption": "Supplementary Figure S15. Paired branch requests for the same source cells and initial noise.",
+      "width": 1356,
+      "height": 915
+    },
+    "method-overview": {
+      "src": "assets/figures/method-overview.webp",
+      "page": 5,
+      "caption": "Figure 1. Source-anchored generation conditioned on hierarchical paths.",
+      "width": 1344,
+      "height": 1206
+    }
+  }
+}
